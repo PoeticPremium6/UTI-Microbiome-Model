@@ -10,6 +10,9 @@ generate_custom_palette <- function(n) {
   hcl(h = hues, l = 40, c = 100)[1:n]
 }
 
+path_to_OTU <- "/Users/josspa/UTI/Taxonomy/Merged_Counts.tsv"
+path_to_TAX <- "/Users/josspa/UTI/Taxonomy/Merged_Tax.tsv"
+
 # Import the OTU data
 OTU <- read.delim(path_to_OTU, header = TRUE, sep = "\t", check.names = FALSE)
 
