@@ -10,8 +10,8 @@ generate_custom_palette <- function(n) {
   hcl(h = hues, l = 40, c = 100)[1:n]
 }
 
-path_to_OTU <- "/Users/josspa/UTI/Taxonomy/Merged_Counts.tsv"
-path_to_TAX <- "/Users/josspa/UTI/Taxonomy/Merged_Tax.tsv"
+path_to_OTU <- "Merged_Counts.tsv"
+path_to_TAX <- "Merged_Tax.tsv"
 
 # Import the OTU data
 OTU <- read.delim(path_to_OTU, header = TRUE, sep = "\t", check.names = FALSE)
@@ -93,7 +93,7 @@ p_genera <- ggplot(filtered_rel_abundance, aes(x = Sample, y = Abundance, fill =
   guides(fill = guide_legend(title = "Genus", title.position = "top", title.theme = element_text(face = "bold")))  # Bold legend title
 
 # Save the plot for top 20 genera
-output_file_path_genera <- "/Users/josspa/UTI/Figures/Figure2/Figure2_genera.png"
+output_file_path_genera <- "Figure2_genera.png"
 ggsave(filename = output_file_path_genera, plot = p_genera, width = 10, height = 6)
 
 # Display the plot
@@ -135,7 +135,7 @@ p_species <- ggplot(filtered_rel_abundance_species, aes(x = Sample, y = Abundanc
   guides(fill = guide_legend(title = "Species", title.position = "top", title.theme = element_text(face = "bold")))  # Bold legend title
 
 # Save the plot for top 20 species
-output_file_path_species <- "/Users/josspa/UTI/Figures/Figure2/Figure2_species.png"
+output_file_path_species <- "Figure2_species.png"
 ggsave(filename = output_file_path_species, plot = p_species, width = 10, height = 6)
 
 # Display the plot
