@@ -50,4 +50,5 @@ stringtie --merge -G $GENOMES_DIR/Gene_Annotations/Escherichia_coli.gff $(printf
 # Final counting with HTSeq for Escherichia coli
 # This step should be repeated for each microbe identified
 for sample in "${samples[@]}"; do
-    htseq-count --format=bam --order=name --stranded=no -m union -a 20 -t exon -i gene_id $COUNTS_DIR/uniq
+    htseq-count --format=bam --order=name --stranded=no -m union -a 20 -t exon -i gene_id $COUNTS_DIR/uniq_${sample}_Escherichia_coli_sorted.bam $TRANSCRIPTOME_DIR/Escherichia_coli_Transcriptome.gtf > $TRANSCRIPTOME_DIR/Escherichia_coli_${sample}_htseq_counts.out
+done
