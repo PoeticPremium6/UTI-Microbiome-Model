@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Load necessary modules
+module load gcc12-env/12.1.0
+module load miniconda3/4.12.0
+
+# Define directories
+HISAT2_DIR="/Software/hisat2-2.1.0"
+GENOMES_DIR="/rUTI/Final/Genomes"
+GENOME_INDEX_DIR="/rUTI/Final/Genome_Index"
+RNA_DIR="/rUTI/Final/mRNA"
+COUNTS_DIR="/rUTI/Final/Counts"
+SUMMARY_DIR="/rUTI/Final/Summary"
+TRANSCRIPTOME_DIR="/rUTI/Transcriptome"
+GENE_ABUNDANCE_DIR="/rUTI/Gene_Abundance"
+
+# Example for Escherichia coli
+# Build genome index for Escherichia coli (repeat for other genomes as identified in phyloseq analysis)
+cd $HISAT2_DIR
+hisat2-build $GENOMES_DIR/Escherichia_coli_genomic.fna $GENOME_INDEX_DIR/Escherichia_coli
+
+# Define an array of samples
+samples=("H25361" "H25362" "H25363" "H25364" "H25365")
+
+# Align reads to Escherichia coli index for each sample
+# Repeat this step for other microbes identified in your phyloseq analysis
+for sample in "${samples[@]}"; do
+    ./hisat2 --all --secondary -p 8 --dta -x $GENOME_INDEX_DIR/Escherichia_coli -1 $RNA_DIR/${sample}_R1_mRNA.fastq -2 $RNA_DIR/${sample}_R2_mRNA.fastq -S $COUNTS_DIR/${sample}_Escherichia_coli.sam --summary-file $SUMMARY_DIR/${sample}_Escherichia_coli
+done
+
+# Convert SAM to BAM, sort, and index for Escherichia coli (repeat for other microbes)
+module load samtools
+for sample in "${samples[@]}"; do
+    samtools view -S -b $COUNTS_DIR/${sample}_Escherichia_coli.sam > $COUNTS_DIR/${sample}_Escherichia_coli.bam
+    samtools sort $COUNTS_DIR/${sample}_Escherichia_coli.bam -o $COUNTS_DIR/uniq_${sample}_Escherichia_coli_sorted.bam
+    samtools index $COUNTS_DIR/uniq_${sample}_Escherichia_coli_sorted.bam
+done
+
+# Assemble transcriptomes using StringTie for Escherichia coli
+# Repeat for other microbes as necessary
+source activate myjupyterlabenv
+for sample in "${samples[@]}"; do
+    stringtie $COUNTS_DIR/uniq_${sample}_Escherichia_coli_sorted.bam -p 8 -G $GENOMES_DIR/Gene_Annotations/Escherichia_coli.gff -e -B -o $TRANSCRIPTOME_DIR/transcripts_Escherichia_coli_${sample}.gff -A $GENE_ABUNDANCE_DIR/gene_abundance_Escherichia_coli_${sample}.tsv
+done
+
+# Merge all transcripts to assemble the Escherichia coli transcriptome
+# This should be repeated for each microbe identified
+stringtie --merge -G $GENOMES_DIR/Gene_Annotations/Escherichia_coli.gff $(printf " %s" "${samples[@]/#/$TRANSCRIPTOME_DIR/transcripts_Escherichia_coli_}.gff") -o $TRANSCRIPTOME_DIR/Escherichia_coli_Transcriptome.gtf -A $TRANSCRIPTOME_DIR/gene_abundance_Escherichia_coli.tsv
+
+# Final counting with HTSeq for Escherichia coli
+# This step should be repeated for each microbe identified
+for sample in "${samples[@]}"; do
+    htseq-count --format=bam --order=name --stranded=no -m union -a 20 -t exon -i gene_id $COUNTS_DIR/uniq
