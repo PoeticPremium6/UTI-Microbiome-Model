@@ -1,0 +1,140 @@
+#Gapseq models need to be conditioned with gene expression data
+#To reconstruct context-specific models
+
+cd /work_beegfs/sukem113/rUTI/Transcriptome
+
+# Extract Chromosome start/end & gene count info from E.coli UTI89 transcriptome files
+awk '{print $4,$5,$10}' /work_beegfs/sukem113/rUTI/Transcriptome/E.coli_UTI89_Transcriptome.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome0.gtf
+
+# Process the extracted data
+awk 'NR>2' /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome0.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome1.gtf
+awk '!_[$0]++' /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome1.gtf | sort -t, -nk1,1 > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome2.gtf
+
+# Since the strain is UTI89, we might not need to filter out its specific references. Adjust if needed for other strains.
+grep -v "UTI89" /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome2.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome3.gtf
+grep -v "AH4AK4" /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome3.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome4.gtf
+
+# Identify duplicates and clean up
+awk 'cnt[$3]++{$3=$3" variant "cnt[$3]-1} 1' /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome4.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome5.gtf
+grep -v "variant" /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome5.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/transcriptome_clean.gtf
+
+# Calculating gene length
+awk 'BEGIN {OFS="  "} {print $4,$5}' /work_beegfs/sukem113/rUTI/Transcriptome/E.coli_UTI89_Transcriptome.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length.gtf
+awk 'BEGIN {OFS="  "} {print $2 - $1}' /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length1.gtf
+paste -d'  ' /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length.gtf /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length1.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length2.gtf
+
+# Navigate to your Transcriptome directory for E.coli UTI89
+cd /work_beegfs/sukem113/rUTI/Transcriptome
+
+# Sort HTSeq count files to align them properly
+# Make sure to replace the file names with your actual E.coli UTI89 count files
+sort -V /work_beegfs/sukem113/rUTI/Transcriptome/E.coli_UTI89_1_htseq_counts.out > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_1_htseq_counts_sorted.out
+
+# Extract gene and count information
+awk '{print $1}' /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_1_htseq_counts_sorted.out > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_genes.gtf
+
+# Repeat the process for counts in all files
+for i in {1..5}
+do
+  awk '{print $2}' /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_"$i"_htseq_counts_sorted.out > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_"$i".gtf
+done
+
+# Merge count files
+paste -d';' /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_genes.gtf /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_1.gtf /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_2.gtf /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_3.gtf /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_4.gtf /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_5.gtf > /work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Counts.csv
+
+# Adjust for specific IDs, species info, or other filters as needed for your analysis.
+#We need to make sure that our transcriptomes match our microbial metabolic models
+
+module load hdf5
+module load R/4.0.0
+module load openmpi
+
+# Open R
+R
+
+# Define the functions to calculate RPKM and TPM
+rpkm <- function(counts, lengths) {
+  rate <- counts / lengths 
+  rate / sum(counts) * 1e6
+}
+
+tpm <- function(counts, lengths) {
+  rate <- counts / lengths
+  rate / sum(rate) * 1e6
+}
+
+# Update paths to the files for E.coli UTI89
+genes <- read.table("/work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length_Clean.csv", header=TRUE, sep=",")
+counts <- read.table("/work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/chromosome_merged_clean.csv", header=TRUE, sep=";")
+
+# Calculate RPKMs and TPMs
+rpkms <- apply(counts[, -1], 2, function(x) rpkm(x, genes$Length))
+tpms <- apply(counts[, -1], 2, function(x) tpm(x, genes$Length))
+
+# Adjust column names if needed
+colnames(rpkms) <- colnames(counts)[-1] # Excludes the first column (gene ID)
+colnames(tpms) <- colnames(counts)[-1]
+
+# Output the results to CSV files
+write.table(rpkms, "/work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/RPKMs.csv", row.names=TRUE, col.names=NA, sep=";", quote=FALSE)
+write.table(tpms, "/work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/TPMS.csv", row.names=TRUE, col.names=NA, sep=";", quote=FALSE)
+
+# Adjust for library paths if needed
+library("sybil", lib="/work_beegfs/sukem113/Software/R_packages/") 
+library("data.table", lib="/work_beegfs/sukem113/Software/R_packages/") 
+
+# Adjust the working directory to where your models are located
+setwd("/work_beegfs/sukem113/Genomes/GapSeq/Models/out/")
+
+# Ensure you have the E.coli UTI89 model available
+Model <- readRDS('E.coli_UTI89.RDS')
+
+# Extract and save the GapSeq Start/Stop information for E.coli UTI89
+str_Data <- paste(Model@react_attr$sstart, Model@react_attr$rxn, sep = ";")
+str_Data1 <- paste(Model@react_attr$sstart, Model@react_attr$send, sep = "_")
+write.table(str_Data, "/work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_GapSeq_Genes.csv", row.names=FALSE, col.names=TRUE, quote=FALSE)
+write.table(str_Data1, "/work_beegfs/sukem113/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Chromosome_Matching.csv", row.names=FALSE, col.names=TRUE, quote=FALSE)
+
+# Exit R
+quit(save="no")
+
+import cobra
+# Replace 'path/to/your/model.sbml' with the actual path to your SBML file
+model_path = 'path/to/your/model.sbml'
+model = cobra.io.read_sbml_model(model_path)
+# Replace 'path/to/your/output_model.mat' with the desired output path for the MATLAB model
+output_path = 'path/to/your/output_model.mat'
+cobra.io.save_matlab_model(model, output_path)
+
+module load git
+module load cplex
+module load matlab
+
+export ILOG_CPLEX_PATH="/path/to/cplex"
+cd /path/to/cobratoolbox/
+initCobraToolbox(false) % The argument 'false' skips the toolbox update check
+changeCobraSolver('ibm_cplex', 'all');
+
+model = readCbModel('/path/to/your/model.mat');
+
+T = readtable('/path/to/your/gene_expression.csv', 'Delimiter', ',');
+S5 = struct('gene', {T.gene}, 'value', T.value);
+
+[expressionRxns, parsedGPR] = mapExpressionToReactions(model, S5);
+
+csvwrite('/path/to/output/expressionRxns.csv', expressionRxns);
+writetable(cell2table(parsedGPR), '/path/to/output/GPR_names.csv');
+
+model = readCbModel('/path/to/your/model.mat');
+
+[consistentModel, removedRxns] = makeModelConsistent(model);
+
+saveModel(consistentModel, 'consistentModel.mat');
+
+[expressionRxns, ~] = mapExpressionToReactions(consistentModel, geneExpressionData);
+
+coreRxns = find(expressionRxns > threshold); % Define threshold according to your data
+tissueModel = fastcore(coreRxns, consistentModel);
+
+saveModel(tissueModel, 'tissueSpecificModel.mat');
+
