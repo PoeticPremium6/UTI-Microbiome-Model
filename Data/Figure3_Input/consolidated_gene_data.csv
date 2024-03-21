@@ -1,0 +1,1044 @@
+Sample,Gene Name,FPKM,vf_category
+C02,aslA,21.439741,Invasion
+C02,chuA,16.874689,Nutritional/Metabolic factor
+C02,chuS,17.687586,Nutritional/Metabolic factor
+C02,chuT,14.089689,Nutritional/Metabolic factor
+C02,chuY,0.0,Nutritional/Metabolic factor
+C02,cnf1,0.0,Exotoxin
+C02,csgA,13.997423,Adherence
+C02,csgB,0.0,Adherence
+C02,csgC,0.0,Adherence
+C02,entA,42.596172,Nutritional/Metabolic factor
+C02,entB,22.538536,Nutritional/Metabolic factor
+C02,entC,46.591194,Nutritional/Metabolic factor
+C02,entD,1688.921997,Nutritional/Metabolic factor
+C02,entE,43.54311,Nutritional/Metabolic factor
+C02,entF,21.993404,Nutritional/Metabolic factor
+C02,entS,17.099922,Nutritional/Metabolic factor
+C02,fdeC,5.299836,Adherence
+C02,fepA,4813.091309,Nutritional/Metabolic factor
+C02,fepB,19.876835,Nutritional/Metabolic factor
+C02,fepC,292.979309,Nutritional/Metabolic factor
+C02,fepD,42.759727,Nutritional/Metabolic factor
+C02,fepG,54.604683,Nutritional/Metabolic factor
+C02,fes,0.0,Nutritional/Metabolic factor
+C02,fimA,22.298012,Adherence
+C02,fimA,3.871472,Adherence
+C02,fimB,1.46723,Adherence
+C02,fimC,0.0,Adherence
+C02,fimD,3.049603,Adherence
+C02,fimE,17.042917,Adherence
+C02,fimF,0.0,Adherence
+C02,fimG,0.0,Adherence
+C02,fimH,6.99849,Adherence
+C02,fimI,35.811287,Adherence
+C02,focA,131.548569,Adherence
+C02,glrR,20.233955,Effector delivery system
+C02,hlyA,0.0,Exotoxin
+C02,hlyC,0.0,Exotoxin
+C02,hlyD,105.517555,Exotoxin
+C02,hlyD,0.0,Exotoxin
+C02,iroB,0.0,Nutritional/Metabolic factor
+C02,iroC,0.0,Nutritional/Metabolic factor
+C02,iroD,0.0,Nutritional/Metabolic factor
+C02,iroE,0.0,Nutritional/Metabolic factor
+C02,iroN,0.0,Nutritional/Metabolic factor
+C02,map,131.480209,Effector delivery system
+C02,neuB,0.0,Invasion
+C02,neuC,0.0,Invasion
+C02,ompA,894.216858,Invasion
+C02,papA,0.0,Adherence
+C02,papC,11.514249,Adherence
+C02,papF,0.0,Adherence
+C02,papH,11.490234,Adherence
+C02,papI,0.0,Adherence
+C02,papX,0.0,Adherence
+C02,sfaA,0.0,Adherence
+C02,sfaC,0.0,Adherence
+C02,sfaD,0.0,Adherence
+C02,sfaF,0.0,Adherence
+C02,sfaG,0.0,Adherence
+C02,sfaH,0.0,Adherence
+C02,sfaS,0.0,Adherence
+C02,sfaX,0.0,Adherence
+C02,sfaY,0.0,Adherence
+H25363,entA,0.0,Nutritional/Metabolic factor
+H25363,entB,722.53363,Nutritional/Metabolic factor
+H25363,entF,534.972473,Nutritional/Metabolic factor
+H25363,fepA,417.257233,Nutritional/Metabolic factor
+H25363,ompA,3334.90625,Invasion
+H25363,papA,2711.293701,Adherence
+D02,aslA,4.097466,Invasion
+D02,chuA,0.0,Nutritional/Metabolic factor
+D02,chuS,0.0,Nutritional/Metabolic factor
+D02,chuT,0.0,Nutritional/Metabolic factor
+D02,chuY,0.0,Nutritional/Metabolic factor
+D02,cnf1,0.0,Exotoxin
+D02,csgA,0.0,Adherence
+D02,csgB,3.719321,Adherence
+D02,csgC,0.0,Adherence
+D02,entA,96.824165,Nutritional/Metabolic factor
+D02,entB,153.827026,Nutritional/Metabolic factor
+D02,entC,134.547562,Nutritional/Metabolic factor
+D02,entD,78.362907,Nutritional/Metabolic factor
+D02,entE,56.970539,Nutritional/Metabolic factor
+D02,entF,146.602402,Nutritional/Metabolic factor
+D02,entS,97.824883,Nutritional/Metabolic factor
+D02,fdeC,1.376829,Adherence
+D02,fepA,360.515625,Nutritional/Metabolic factor
+D02,fepB,134.277832,Nutritional/Metabolic factor
+D02,fepC,148.011566,Nutritional/Metabolic factor
+D02,fepD,66.899361,Nutritional/Metabolic factor
+D02,fepG,54.586979,Nutritional/Metabolic factor
+D02,fes,119.689468,Nutritional/Metabolic factor
+D02,fimA,0.0,Adherence
+D02,fimA,0.0,Adherence
+D02,fimB,2.81262,Adherence
+D02,fimC,3.435455,Adherence
+D02,fimD,1.929463,Adherence
+D02,fimE,9.915252,Adherence
+D02,fimF,0.0,Adherence
+D02,fimG,0.0,Adherence
+D02,fimH,5.579348,Adherence
+D02,fimI,0.0,Adherence
+D02,focA,565.717651,Adherence
+D02,glrR,31.895868,Effector delivery system
+D02,hlyA,0.0,Exotoxin
+D02,hlyC,0.0,Exotoxin
+D02,hlyD,49.45977,Exotoxin
+D02,hlyD,0.0,Exotoxin
+D02,iroB,0.0,Nutritional/Metabolic factor
+D02,iroC,0.0,Nutritional/Metabolic factor
+D02,iroD,0.0,Nutritional/Metabolic factor
+D02,iroE,0.0,Nutritional/Metabolic factor
+D02,iroN,0.0,Nutritional/Metabolic factor
+D02,map,378.556061,Effector delivery system
+D02,neuB,0.0,Invasion
+D02,neuC,0.0,Invasion
+D02,ompA,4132.194336,Invasion
+D02,papA,6.014225,Adherence
+D02,papC,0.0,Adherence
+D02,papF,0.0,Adherence
+D02,papH,0.0,Adherence
+D02,papI,0.0,Adherence
+D02,papX,1.536254,Adherence
+D02,sfaA,0.0,Adherence
+D02,sfaC,0.0,Adherence
+D02,sfaD,0.0,Adherence
+D02,sfaF,0.0,Adherence
+D02,sfaG,0.0,Adherence
+D02,sfaH,0.0,Adherence
+D02,sfaS,0.0,Adherence
+D02,sfaX,0.0,Adherence
+D02,sfaY,0.0,Adherence
+D01,aslA,0.0,Invasion
+D01,chuA,0.0,Nutritional/Metabolic factor
+D01,chuS,169.240356,Nutritional/Metabolic factor
+D01,chuT,0.0,Nutritional/Metabolic factor
+D01,chuY,0.0,Nutritional/Metabolic factor
+D01,cnf1,0.0,Exotoxin
+D01,csgA,0.0,Adherence
+D01,csgB,0.0,Adherence
+D01,csgC,0.0,Adherence
+D01,entA,0.0,Nutritional/Metabolic factor
+D01,entB,0.0,Nutritional/Metabolic factor
+D01,entC,0.0,Nutritional/Metabolic factor
+D01,entD,0.0,Nutritional/Metabolic factor
+D01,entE,0.0,Nutritional/Metabolic factor
+D01,entF,16.253939,Nutritional/Metabolic factor
+D01,entS,0.0,Nutritional/Metabolic factor
+D01,fdeC,0.0,Adherence
+D01,fepA,0.0,Nutritional/Metabolic factor
+D01,fepB,0.0,Nutritional/Metabolic factor
+D01,fepC,0.0,Nutritional/Metabolic factor
+D01,fepD,64.039009,Nutritional/Metabolic factor
+D01,fepG,0.0,Nutritional/Metabolic factor
+D01,fes,0.0,Nutritional/Metabolic factor
+D01,fimA,0.0,Adherence
+D01,fimA,0.0,Adherence
+D01,fimB,0.0,Adherence
+D01,fimC,0.0,Adherence
+D01,fimD,0.0,Adherence
+D01,fimE,431.219025,Adherence
+D01,fimF,0.0,Adherence
+D01,fimG,0.0,Adherence
+D01,fimH,0.0,Adherence
+D01,fimI,0.0,Adherence
+D01,focA,150.023361,Adherence
+D01,glrR,0.0,Effector delivery system
+D01,hlyA,0.0,Exotoxin
+D01,hlyC,0.0,Exotoxin
+D01,hlyD,0.0,Exotoxin
+D01,hlyD,0.0,Exotoxin
+D01,iroB,0.0,Nutritional/Metabolic factor
+D01,iroC,0.0,Nutritional/Metabolic factor
+D01,iroD,0.0,Nutritional/Metabolic factor
+D01,iroE,0.0,Nutritional/Metabolic factor
+D01,iroN,0.0,Nutritional/Metabolic factor
+D01,map,0.0,Effector delivery system
+D01,neuB,0.0,Invasion
+D01,neuC,0.0,Invasion
+D01,ompA,155.167068,Invasion
+D01,papA,0.0,Adherence
+D01,papC,0.0,Adherence
+D01,papF,0.0,Adherence
+D01,papH,0.0,Adherence
+D01,papI,0.0,Adherence
+D01,papX,0.0,Adherence
+D01,sfaA,0.0,Adherence
+D01,sfaC,0.0,Adherence
+D01,sfaD,0.0,Adherence
+D01,sfaF,0.0,Adherence
+D01,sfaG,0.0,Adherence
+D01,sfaH,0.0,Adherence
+D01,sfaS,0.0,Adherence
+D01,sfaX,0.0,Adherence
+D01,sfaY,0.0,Adherence
+H25365,aslA,35.689648,Invasion
+H25365,cnf1,38.737411,Exotoxin
+H25365,entA,125.919968,Nutritional/Metabolic factor
+H25365,entB,141.07077,Nutritional/Metabolic factor
+H25365,entC,106.548309,Nutritional/Metabolic factor
+H25365,entD,199.662827,Nutritional/Metabolic factor
+H25365,entE,104.09594,Nutritional/Metabolic factor
+H25365,entF,173.709595,Nutritional/Metabolic factor
+H25365,entS,47.331158,Nutritional/Metabolic factor
+H25365,fdeC,7.268318,Adherence
+H25365,fepA,769.670654,Nutritional/Metabolic factor
+H25365,fepB,85.584106,Nutritional/Metabolic factor
+H25365,fepC,0.0,Nutritional/Metabolic factor
+H25365,fepD,36.791264,Nutritional/Metabolic factor
+H25365,fepG,65.199348,Nutritional/Metabolic factor
+H25365,fes,108.249313,Nutritional/Metabolic factor
+H25365,fimA,18.970749,Adherence
+H25365,fimA,0.0,Adherence
+H25365,fimB,2.353748,Adherence
+H25365,fimD,0.0,Adherence
+H25365,fimE,31.973351,Adherence
+H25365,fimF,23.028267,Adherence
+H25365,fimG,0.0,Adherence
+H25365,fimH,22.085617,Adherence
+H25365,fimI,51.736229,Adherence
+H25365,focA,52.935154,Adherence
+H25365,glrR,41.510334,Effector delivery system
+H25365,hlyA,39.45821,Exotoxin
+H25365,hlyD,43.251587,Exotoxin
+H25365,hlyD,12.561521,Exotoxin
+H25365,iroB,396.324188,Nutritional/Metabolic factor
+H25365,iroC,150.453796,Nutritional/Metabolic factor
+H25365,iroD,60.063072,Nutritional/Metabolic factor
+H25365,iroE,136.596985,Nutritional/Metabolic factor
+H25365,iroN,393.204926,Nutritional/Metabolic factor
+H25365,map,113.527534,Effector delivery system
+H25365,ompA,958.309082,Invasion
+H25365,papC,59.36491,Adherence
+H25365,papH,14.434299,Adherence
+H25365,papI,38.570293,Adherence
+H25365,papX,27.690268,Adherence
+H25365,sfaA,24.928486,Adherence
+H25365,sfaD,0.0,Adherence
+H25365,sfaF,10.886064,Adherence
+H25365,sfaG,0.0,Adherence
+H25365,sfaH,51.753769,Adherence
+H25365,sfaS,30.62332,Adherence
+H25365,sfaX,21.119312,Adherence
+H25365,sfaY,11.541646,Adherence
+C01,aslA,23.281107,Invasion
+C01,chuA,0.0,Nutritional/Metabolic factor
+C01,chuS,0.0,Nutritional/Metabolic factor
+C01,chuT,0.0,Nutritional/Metabolic factor
+C01,chuY,61.784855,Nutritional/Metabolic factor
+C01,cnf1,0.0,Exotoxin
+C01,csgA,0.0,Adherence
+C01,csgB,0.0,Adherence
+C01,csgC,0.0,Adherence
+C01,entA,27.323948,Nutritional/Metabolic factor
+C01,entB,0.0,Nutritional/Metabolic factor
+C01,entC,0.0,Nutritional/Metabolic factor
+C01,entD,0.0,Nutritional/Metabolic factor
+C01,entE,23.931227,Nutritional/Metabolic factor
+C01,entF,0.0,Nutritional/Metabolic factor
+C01,entS,0.0,Nutritional/Metabolic factor
+C01,fdeC,17.783054,Adherence
+C01,fepA,43.009232,Nutritional/Metabolic factor
+C01,fepB,0.0,Nutritional/Metabolic factor
+C01,fepC,0.0,Nutritional/Metabolic factor
+C01,fepD,0.0,Nutritional/Metabolic factor
+C01,fepG,0.0,Nutritional/Metabolic factor
+C01,fes,0.0,Nutritional/Metabolic factor
+C01,fimA,0.0,Adherence
+C01,fimA,0.0,Adherence
+C01,fimB,0.0,Adherence
+C01,fimC,0.0,Adherence
+C01,fimD,0.0,Adherence
+C01,fimE,0.0,Adherence
+C01,fimF,0.0,Adherence
+C01,fimG,0.0,Adherence
+C01,fimH,0.0,Adherence
+C01,fimI,0.0,Adherence
+C01,focA,162.115784,Adherence
+C01,glrR,0.0,Effector delivery system
+C01,hlyA,0.0,Exotoxin
+C01,hlyC,0.0,Exotoxin
+C01,hlyD,0.0,Exotoxin
+C01,hlyD,0.0,Exotoxin
+C01,iroB,6.774101,Nutritional/Metabolic factor
+C01,iroC,10.43065,Nutritional/Metabolic factor
+C01,iroD,15.364759,Nutritional/Metabolic factor
+C01,iroE,19.35317,Nutritional/Metabolic factor
+C01,iroN,141.611298,Nutritional/Metabolic factor
+C01,map,241.524933,Effector delivery system
+C01,neuB,0.0,Invasion
+C01,neuC,0.0,Invasion
+C01,ompA,2286.741943,Invasion
+C01,papA,0.0,Adherence
+C01,papC,0.0,Adherence
+C01,papF,0.0,Adherence
+C01,papH,0.0,Adherence
+C01,papI,0.0,Adherence
+C01,papX,0.0,Adherence
+C01,sfaA,0.0,Adherence
+C01,sfaC,0.0,Adherence
+C01,sfaD,0.0,Adherence
+C01,sfaF,0.0,Adherence
+C01,sfaG,0.0,Adherence
+C01,sfaH,0.0,Adherence
+C01,sfaS,0.0,Adherence
+C01,sfaX,0.0,Adherence
+C01,sfaY,0.0,Adherence
+G01,aslA,215.726562,Invasion
+G01,chuA,0.0,Nutritional/Metabolic factor
+G01,chuS,0.0,Nutritional/Metabolic factor
+G01,chuT,0.0,Nutritional/Metabolic factor
+G01,chuY,0.0,Nutritional/Metabolic factor
+G01,cnf1,0.0,Exotoxin
+G01,csgA,0.0,Adherence
+G01,csgB,0.0,Adherence
+G01,csgC,0.0,Adherence
+G01,entA,0.0,Nutritional/Metabolic factor
+G01,entB,0.0,Nutritional/Metabolic factor
+G01,entC,0.0,Nutritional/Metabolic factor
+G01,entD,0.0,Nutritional/Metabolic factor
+G01,entE,0.0,Nutritional/Metabolic factor
+G01,entF,0.0,Nutritional/Metabolic factor
+G01,entS,0.0,Nutritional/Metabolic factor
+G01,fdeC,0.0,Adherence
+G01,fepA,159.411545,Nutritional/Metabolic factor
+G01,fepB,0.0,Nutritional/Metabolic factor
+G01,fepC,0.0,Nutritional/Metabolic factor
+G01,fepD,0.0,Nutritional/Metabolic factor
+G01,fepG,0.0,Nutritional/Metabolic factor
+G01,fes,0.0,Nutritional/Metabolic factor
+G01,fimA,2331.776123,Adherence
+G01,fimA,0.0,Adherence
+G01,fimB,0.0,Adherence
+G01,fimC,1476.217773,Adherence
+G01,fimD,651.02887,Adherence
+G01,fimE,0.0,Adherence
+G01,fimF,1005.867126,Adherence
+G01,fimG,1417.636719,Adherence
+G01,fimH,2024.640503,Adherence
+G01,fimI,2545.723389,Adherence
+G01,focA,0.0,Adherence
+G01,glrR,0.0,Effector delivery system
+G01,hlyA,346.253845,Exotoxin
+G01,hlyC,0.0,Exotoxin
+G01,hlyD,0.0,Exotoxin
+G01,hlyD,0.0,Exotoxin
+G01,iroB,0.0,Nutritional/Metabolic factor
+G01,iroC,0.0,Nutritional/Metabolic factor
+G01,iroD,0.0,Nutritional/Metabolic factor
+G01,iroE,0.0,Nutritional/Metabolic factor
+G01,iroN,0.0,Nutritional/Metabolic factor
+G01,map,222.479202,Effector delivery system
+G01,neuB,0.0,Invasion
+G01,neuC,0.0,Invasion
+G01,ompA,1086.719849,Invasion
+G01,papA,0.0,Adherence
+G01,papC,0.0,Adherence
+G01,papF,0.0,Adherence
+G01,papH,0.0,Adherence
+G01,papI,0.0,Adherence
+G01,papX,0.0,Adherence
+G01,sfaA,0.0,Adherence
+G01,sfaC,0.0,Adherence
+G01,sfaD,0.0,Adherence
+G01,sfaF,135.784378,Adherence
+G01,sfaG,0.0,Adherence
+G01,sfaH,0.0,Adherence
+G01,sfaS,0.0,Adherence
+G01,sfaX,0.0,Adherence
+G01,sfaY,0.0,Adherence
+H25362,aslA,4.446088,Invasion
+H25362,csgB,20.029715,Adherence
+H25362,entA,294.553833,Nutritional/Metabolic factor
+H25362,entB,346.250916,Nutritional/Metabolic factor
+H25362,entC,226.392761,Nutritional/Metabolic factor
+H25362,entD,287.965851,Nutritional/Metabolic factor
+H25362,entE,174.901093,Nutritional/Metabolic factor
+H25362,entF,344.609955,Nutritional/Metabolic factor
+H25362,entS,66.454117,Nutritional/Metabolic factor
+H25362,fdeC,13.505276,Adherence
+H25362,fepA,1738.283691,Nutritional/Metabolic factor
+H25362,fepB,75.304642,Nutritional/Metabolic factor
+H25362,fepC,123.30085,Nutritional/Metabolic factor
+H25362,fepD,84.626923,Nutritional/Metabolic factor
+H25362,fepG,52.071087,Nutritional/Metabolic factor
+H25362,fes,69.318703,Nutritional/Metabolic factor
+H25362,fimA,22.308447,Adherence
+H25362,fimA,7.892609,Adherence
+H25362,fimB,10.664645,Adherence
+H25362,fimE,20.450792,Adherence
+H25362,fimH,27.247747,Adherence
+H25362,focA,73.484352,Adherence
+H25362,glrR,35.522755,Effector delivery system
+H25362,hlyD,86.602661,Exotoxin
+H25362,map,121.687012,Effector delivery system
+H25362,ompA,1875.968994,Invasion
+H25362,papC,65.918968,Adherence
+H25362,papF,13.869035,Adherence
+H25362,papX,8.442021,Adherence
+F01,aslA,2.191479,Invasion
+F01,chuA,0.0,Nutritional/Metabolic factor
+F01,chuS,0.0,Nutritional/Metabolic factor
+F01,chuT,0.0,Nutritional/Metabolic factor
+F01,chuY,0.0,Nutritional/Metabolic factor
+F01,cnf1,0.0,Exotoxin
+F01,csgA,0.0,Adherence
+F01,csgB,0.0,Adherence
+F01,csgC,0.0,Adherence
+F01,entA,147.020691,Nutritional/Metabolic factor
+F01,entB,160.362305,Nutritional/Metabolic factor
+F01,entC,63.679241,Nutritional/Metabolic factor
+F01,entD,158.932083,Nutritional/Metabolic factor
+F01,entE,47.258236,Nutritional/Metabolic factor
+F01,entF,185.34523,Nutritional/Metabolic factor
+F01,entS,21.144526,Nutritional/Metabolic factor
+F01,fdeC,2.330511,Adherence
+F01,fepA,754.105347,Nutritional/Metabolic factor
+F01,fepB,41.937233,Nutritional/Metabolic factor
+F01,fepC,0.0,Nutritional/Metabolic factor
+F01,fepD,31.652184,Nutritional/Metabolic factor
+F01,fepG,49.427559,Nutritional/Metabolic factor
+F01,fes,64.365211,Nutritional/Metabolic factor
+F01,fimA,51.841686,Adherence
+F01,fimA,0.0,Adherence
+F01,fimB,2.092617,Adherence
+F01,fimC,5.774428,Adherence
+F01,fimD,5.228081,Adherence
+F01,fimE,0.0,Adherence
+F01,fimF,0.0,Adherence
+F01,fimG,5.669455,Adherence
+F01,fimH,27.081678,Adherence
+F01,fimI,20.238937,Adherence
+F01,focA,104.983513,Adherence
+F01,glrR,34.527039,Effector delivery system
+F01,hlyA,0.0,Exotoxin
+F01,hlyC,0.0,Exotoxin
+F01,hlyD,44.177265,Exotoxin
+F01,hlyD,0.0,Exotoxin
+F01,iroB,0.0,Nutritional/Metabolic factor
+F01,iroC,0.0,Nutritional/Metabolic factor
+F01,iroD,0.0,Nutritional/Metabolic factor
+F01,iroE,0.0,Nutritional/Metabolic factor
+F01,iroN,0.0,Nutritional/Metabolic factor
+F01,map,113.095695,Effector delivery system
+F01,neuB,0.0,Invasion
+F01,neuC,0.0,Invasion
+F01,ompA,1734.737549,Invasion
+F01,papA,0.0,Adherence
+F01,papC,0.0,Adherence
+F01,papF,0.0,Adherence
+F01,papH,0.0,Adherence
+F01,papI,0.0,Adherence
+F01,papX,0.0,Adherence
+F01,sfaA,0.0,Adherence
+F01,sfaC,0.0,Adherence
+F01,sfaD,0.0,Adherence
+F01,sfaF,0.0,Adherence
+F01,sfaG,0.0,Adherence
+F01,sfaH,0.0,Adherence
+F01,sfaS,0.0,Adherence
+F01,sfaX,0.0,Adherence
+F01,sfaY,0.0,Adherence
+B01,aslA,1.504556,Invasion
+B01,chuA,428.385681,Nutritional/Metabolic factor
+B01,chuS,661.806763,Nutritional/Metabolic factor
+B01,chuT,152.354126,Nutritional/Metabolic factor
+B01,chuY,924.948303,Nutritional/Metabolic factor
+B01,cnf1,0.0,Exotoxin
+B01,csgA,1.237113,Adherence
+B01,csgB,0.0,Adherence
+B01,csgC,5.593097,Adherence
+B01,entA,134.281586,Nutritional/Metabolic factor
+B01,entB,122.464035,Nutritional/Metabolic factor
+B01,entC,55.71558,Nutritional/Metabolic factor
+B01,entD,12.645526,Nutritional/Metabolic factor
+B01,entE,43.071716,Nutritional/Metabolic factor
+B01,entF,1.557839,Nutritional/Metabolic factor
+B01,entS,19.950609,Nutritional/Metabolic factor
+B01,fdeC,1.048414,Adherence
+B01,fepA,135.377426,Nutritional/Metabolic factor
+B01,fepB,47.538792,Nutritional/Metabolic factor
+B01,fepC,29.882059,Nutritional/Metabolic factor
+B01,fepD,30.496479,Nutritional/Metabolic factor
+B01,fepG,31.240364,Nutritional/Metabolic factor
+B01,fes,1.153717,Nutritional/Metabolic factor
+B01,fimA,1.603524,Adherence
+B01,fimA,0.411416,Adherence
+B01,fimB,4.963495,Adherence
+B01,fimC,0.0,Adherence
+B01,fimD,0.0,Adherence
+B01,fimE,2.654803,Adherence
+B01,fimF,0.21926,Adherence
+B01,fimG,0.453098,Adherence
+B01,fimH,3.753317,Adherence
+B01,fimI,0.845688,Adherence
+B01,focA,94.311417,Adherence
+B01,glrR,14.145229,Effector delivery system
+B01,hlyA,0.0,Exotoxin
+B01,hlyC,0.0,Exotoxin
+B01,hlyD,17.868006,Exotoxin
+B01,hlyD,0.0,Exotoxin
+B01,iroB,499.517273,Nutritional/Metabolic factor
+B01,iroC,273.655151,Nutritional/Metabolic factor
+B01,iroD,219.654861,Nutritional/Metabolic factor
+B01,iroE,231.399826,Nutritional/Metabolic factor
+B01,iroN,554.279968,Nutritional/Metabolic factor
+B01,map,144.014618,Effector delivery system
+B01,neuB,0.0,Invasion
+B01,neuC,0.0,Invasion
+B01,ompA,1143.83252,Invasion
+B01,papA,0.0,Adherence
+B01,papC,0.0,Adherence
+B01,papF,0.0,Adherence
+B01,papH,0.0,Adherence
+B01,papI,0.0,Adherence
+B01,papX,0.0,Adherence
+B01,sfaA,0.0,Adherence
+B01,sfaC,0.0,Adherence
+B01,sfaD,0.0,Adherence
+B01,sfaF,0.0,Adherence
+B01,sfaG,0.0,Adherence
+B01,sfaH,0.0,Adherence
+B01,sfaS,0.0,Adherence
+B01,sfaX,0.0,Adherence
+B01,sfaY,0.0,Adherence
+E01,aslA,5.197275,Invasion
+E01,chuA,516.18158,Nutritional/Metabolic factor
+E01,chuS,322.671692,Nutritional/Metabolic factor
+E01,chuT,120.15976,Nutritional/Metabolic factor
+E01,chuY,480.525543,Nutritional/Metabolic factor
+E01,cnf1,7.111455,Exotoxin
+E01,csgA,0.0,Adherence
+E01,csgB,0.0,Adherence
+E01,csgC,25.642527,Adherence
+E01,entA,58.275791,Nutritional/Metabolic factor
+E01,entB,0.0,Nutritional/Metabolic factor
+E01,entC,55.478077,Nutritional/Metabolic factor
+E01,entD,19.636951,Nutritional/Metabolic factor
+E01,entE,30.867146,Nutritional/Metabolic factor
+E01,entF,121.880905,Nutritional/Metabolic factor
+E01,entS,28.462786,Nutritional/Metabolic factor
+E01,fdeC,7.375438,Adherence
+E01,fepA,90.750832,Nutritional/Metabolic factor
+E01,fepB,30.325342,Nutritional/Metabolic factor
+E01,fepC,41.823483,Nutritional/Metabolic factor
+E01,fepD,46.719158,Nutritional/Metabolic factor
+E01,fepG,29.462349,Nutritional/Metabolic factor
+E01,fes,123.752159,Nutritional/Metabolic factor
+E01,fimA,0.0,Adherence
+E01,fimA,0.0,Adherence
+E01,fimB,12.494858,Adherence
+E01,fimC,19.141523,Adherence
+E01,fimD,0.0,Adherence
+E01,fimE,14.303109,Adherence
+E01,fimF,0.0,Adherence
+E01,fimG,0.0,Adherence
+E01,fimH,0.0,Adherence
+E01,fimI,0.0,Adherence
+E01,focA,83.195023,Adherence
+E01,glrR,20.446703,Effector delivery system
+E01,hlyA,2.776895,Exotoxin
+E01,hlyC,0.0,Exotoxin
+E01,hlyD,139.147415,Exotoxin
+E01,hlyD,0.0,Exotoxin
+E01,iroB,0.0,Nutritional/Metabolic factor
+E01,iroC,0.0,Nutritional/Metabolic factor
+E01,iroD,0.0,Nutritional/Metabolic factor
+E01,iroE,0.0,Nutritional/Metabolic factor
+E01,iroN,0.0,Nutritional/Metabolic factor
+E01,map,44.683311,Effector delivery system
+E01,neuB,0.0,Invasion
+E01,neuC,0.0,Invasion
+E01,ompA,1297.269165,Invasion
+E01,papA,4.749788,Adherence
+E01,papC,18.047756,Adherence
+E01,papF,0.0,Adherence
+E01,papH,5.471582,Adherence
+E01,papI,0.0,Adherence
+E01,papX,56.942593,Adherence
+E01,sfaA,0.0,Adherence
+E01,sfaC,0.0,Adherence
+E01,sfaD,0.0,Adherence
+E01,sfaF,0.0,Adherence
+E01,sfaG,0.0,Adherence
+E01,sfaH,0.0,Adherence
+E01,sfaS,0.0,Adherence
+E01,sfaX,24.164225,Adherence
+E01,sfaY,0.0,Adherence
+A01,aslA,0.0,Invasion
+A01,chuA,681.879517,Nutritional/Metabolic factor
+A01,chuS,661.080139,Nutritional/Metabolic factor
+A01,chuT,106.66423,Nutritional/Metabolic factor
+A01,chuY,0.0,Nutritional/Metabolic factor
+A01,cnf1,0.0,Exotoxin
+A01,csgA,0.0,Adherence
+A01,csgB,0.0,Adherence
+A01,csgC,0.0,Adherence
+A01,entA,192.384842,Nutritional/Metabolic factor
+A01,entB,311.157532,Nutritional/Metabolic factor
+A01,entC,207.478226,Nutritional/Metabolic factor
+A01,entD,110.882523,Nutritional/Metabolic factor
+A01,entE,71.941254,Nutritional/Metabolic factor
+A01,entF,112.288773,Nutritional/Metabolic factor
+A01,entS,65.169472,Nutritional/Metabolic factor
+A01,fdeC,5.629231,Adherence
+A01,fepA,304.804504,Nutritional/Metabolic factor
+A01,fepB,74.771126,Nutritional/Metabolic factor
+A01,fepC,41.967964,Nutritional/Metabolic factor
+A01,fepD,79.720695,Nutritional/Metabolic factor
+A01,fepG,10.631819,Nutritional/Metabolic factor
+A01,fes,32.324791,Nutritional/Metabolic factor
+A01,fimA,1442.810059,Adherence
+A01,fimA,4154.043457,Adherence
+A01,fimB,0.0,Adherence
+A01,fimC,1058.997192,Adherence
+A01,fimD,704.339355,Adherence
+A01,fimE,9.824526,Adherence
+A01,fimF,215.72197,Adherence
+A01,fimG,678.92572,Adherence
+A01,fimH,403.227631,Adherence
+A01,fimI,2333.092529,Adherence
+A01,focA,113.203278,Adherence
+A01,glrR,8.874825,Effector delivery system
+A01,hlyA,0.0,Exotoxin
+A01,hlyC,0.0,Exotoxin
+A01,hlyD,12.013202,Exotoxin
+A01,hlyD,0.0,Exotoxin
+A01,iroB,0.0,Nutritional/Metabolic factor
+A01,iroC,0.0,Nutritional/Metabolic factor
+A01,iroD,0.0,Nutritional/Metabolic factor
+A01,iroE,0.0,Nutritional/Metabolic factor
+A01,iroN,0.0,Nutritional/Metabolic factor
+A01,map,218.674286,Effector delivery system
+A01,neuB,0.0,Invasion
+A01,neuC,0.0,Invasion
+A01,ompA,2860.900391,Invasion
+A01,papA,0.0,Adherence
+A01,papC,0.0,Adherence
+A01,papF,0.0,Adherence
+A01,papH,0.0,Adherence
+A01,papI,0.0,Adherence
+A01,papX,86.278748,Adherence
+A01,sfaA,0.0,Adherence
+A01,sfaC,0.0,Adherence
+A01,sfaD,0.0,Adherence
+A01,sfaF,0.0,Adherence
+A01,sfaG,0.0,Adherence
+A01,sfaH,0.0,Adherence
+A01,sfaS,0.0,Adherence
+A01,sfaX,0.0,Adherence
+A01,sfaY,0.0,Adherence
+A02,aslA,3.45376,Invasion
+A02,chuA,322.344147,Nutritional/Metabolic factor
+A02,chuS,278.308319,Nutritional/Metabolic factor
+A02,chuT,174.155289,Nutritional/Metabolic factor
+A02,chuY,183.181854,Nutritional/Metabolic factor
+A02,cnf1,8.432767,Exotoxin
+A02,csgA,5.711346,Adherence
+A02,csgB,0.373294,Adherence
+A02,csgC,0.0,Adherence
+A02,entA,24.285505,Nutritional/Metabolic factor
+A02,entB,0.0,Nutritional/Metabolic factor
+A02,entC,28.587236,Nutritional/Metabolic factor
+A02,entD,32.152798,Nutritional/Metabolic factor
+A02,entE,8.373682,Nutritional/Metabolic factor
+A02,entF,57.821121,Nutritional/Metabolic factor
+A02,entS,7.129948,Nutritional/Metabolic factor
+A02,fdeC,2.246385,Adherence
+A02,fepA,70.545486,Nutritional/Metabolic factor
+A02,fepB,27.036098,Nutritional/Metabolic factor
+A02,fepC,58.93729,Nutritional/Metabolic factor
+A02,fepD,77.852928,Nutritional/Metabolic factor
+A02,fepG,40.470287,Nutritional/Metabolic factor
+A02,fes,57.299141,Nutritional/Metabolic factor
+A02,fimA,4.180058,Adherence
+A02,fimA,1466.54126,Adherence
+A02,fimB,21.905682,Adherence
+A02,fimC,980.48053,Adherence
+A02,fimD,309.089172,Adherence
+A02,fimE,228.971054,Adherence
+A02,fimF,149.680405,Adherence
+A02,fimG,208.545654,Adherence
+A02,fimH,184.877594,Adherence
+A02,fimI,2379.614258,Adherence
+A02,focA,118.435303,Adherence
+A02,glrR,31.749033,Effector delivery system
+A02,hlyA,1.970679,Exotoxin
+A02,hlyC,1.692249,Exotoxin
+A02,hlyD,72.063774,Exotoxin
+A02,hlyD,1.492546,Exotoxin
+A02,iroB,0.0,Nutritional/Metabolic factor
+A02,iroC,0.0,Nutritional/Metabolic factor
+A02,iroD,0.0,Nutritional/Metabolic factor
+A02,iroE,0.0,Nutritional/Metabolic factor
+A02,iroN,0.0,Nutritional/Metabolic factor
+A02,map,98.374702,Effector delivery system
+A02,neuB,0.0,Invasion
+A02,neuC,0.0,Invasion
+A02,ompA,394.561188,Invasion
+A02,papA,12.99291,Adherence
+A02,papC,14.293515,Adherence
+A02,papF,3.444943,Adherence
+A02,papH,0.0,Adherence
+A02,papI,0.0,Adherence
+A02,papX,11.37886,Adherence
+A02,sfaA,0.0,Adherence
+A02,sfaC,0.0,Adherence
+A02,sfaD,0.0,Adherence
+A02,sfaF,0.0,Adherence
+A02,sfaG,0.0,Adherence
+A02,sfaH,0.0,Adherence
+A02,sfaS,0.0,Adherence
+A02,sfaX,2.266522,Adherence
+A02,sfaY,0.0,Adherence
+H25364,aslA,35.689648,Invasion
+H25364,cnf1,38.737411,Exotoxin
+H25364,entA,125.919968,Nutritional/Metabolic factor
+H25364,entB,141.07077,Nutritional/Metabolic factor
+H25364,entC,106.548309,Nutritional/Metabolic factor
+H25364,entD,199.662827,Nutritional/Metabolic factor
+H25364,entE,104.09594,Nutritional/Metabolic factor
+H25364,entF,173.709595,Nutritional/Metabolic factor
+H25364,entS,47.331158,Nutritional/Metabolic factor
+H25364,fdeC,7.268318,Adherence
+H25364,fepA,769.670654,Nutritional/Metabolic factor
+H25364,fepB,85.584106,Nutritional/Metabolic factor
+H25364,fepC,0.0,Nutritional/Metabolic factor
+H25364,fepD,36.791264,Nutritional/Metabolic factor
+H25364,fepG,65.199348,Nutritional/Metabolic factor
+H25364,fes,108.249313,Nutritional/Metabolic factor
+H25364,fimA,18.970749,Adherence
+H25364,fimA,0.0,Adherence
+H25364,fimB,2.353748,Adherence
+H25364,fimD,0.0,Adherence
+H25364,fimE,31.973351,Adherence
+H25364,fimF,23.028267,Adherence
+H25364,fimG,0.0,Adherence
+H25364,fimH,22.085617,Adherence
+H25364,fimI,51.736229,Adherence
+H25364,focA,52.935154,Adherence
+H25364,glrR,41.510334,Effector delivery system
+H25364,hlyA,39.45821,Exotoxin
+H25364,hlyD,43.251587,Exotoxin
+H25364,hlyD,12.561521,Exotoxin
+H25364,iroB,396.324188,Nutritional/Metabolic factor
+H25364,iroC,150.453796,Nutritional/Metabolic factor
+H25364,iroD,60.063072,Nutritional/Metabolic factor
+H25364,iroE,136.596985,Nutritional/Metabolic factor
+H25364,iroN,393.204926,Nutritional/Metabolic factor
+H25364,map,113.527534,Effector delivery system
+H25364,ompA,958.309082,Invasion
+H25364,papC,59.36491,Adherence
+H25364,papH,14.434299,Adherence
+H25364,papI,38.570293,Adherence
+H25364,papX,27.690268,Adherence
+H25364,sfaA,24.928486,Adherence
+H25364,sfaD,0.0,Adherence
+H25364,sfaF,10.886064,Adherence
+H25364,sfaG,0.0,Adherence
+H25364,sfaH,51.753769,Adherence
+H25364,sfaS,30.62332,Adherence
+H25364,sfaX,21.119312,Adherence
+H25364,sfaY,11.541646,Adherence
+E02,aslA,5.155774,Invasion
+E02,chuA,82.523857,Nutritional/Metabolic factor
+E02,chuS,143.088913,Nutritional/Metabolic factor
+E02,chuT,47.250324,Nutritional/Metabolic factor
+E02,chuY,487.432922,Nutritional/Metabolic factor
+E02,cnf1,0.0,Exotoxin
+E02,csgA,0.0,Adherence
+E02,csgB,0.0,Adherence
+E02,csgC,25.639584,Adherence
+E02,entA,192.998566,Nutritional/Metabolic factor
+E02,entB,207.182449,Nutritional/Metabolic factor
+E02,entC,48.899578,Nutritional/Metabolic factor
+E02,entD,0.0,Nutritional/Metabolic factor
+E02,entE,67.962234,Nutritional/Metabolic factor
+E02,entF,155.549881,Nutritional/Metabolic factor
+E02,entS,98.894615,Nutritional/Metabolic factor
+E02,fdeC,0.308456,Adherence
+E02,fepA,91.587013,Nutritional/Metabolic factor
+E02,fepB,26.152617,Nutritional/Metabolic factor
+E02,fepC,66.779968,Nutritional/Metabolic factor
+E02,fepD,31.002695,Nutritional/Metabolic factor
+E02,fepG,64.930656,Nutritional/Metabolic factor
+E02,fes,22.439846,Nutritional/Metabolic factor
+E02,fimA,0.0,Adherence
+E02,fimA,0.0,Adherence
+E02,fimB,6.107843,Adherence
+E02,fimC,0.0,Adherence
+E02,fimD,0.0,Adherence
+E02,fimE,0.0,Adherence
+E02,fimF,0.0,Adherence
+E02,fimG,0.0,Adherence
+E02,fimH,4.727535,Adherence
+E02,fimI,0.0,Adherence
+E02,focA,192.142853,Adherence
+E02,glrR,54.111103,Effector delivery system
+E02,hlyA,0.0,Exotoxin
+E02,hlyC,0.0,Exotoxin
+E02,hlyD,150.065048,Exotoxin
+E02,hlyD,0.0,Exotoxin
+E02,iroB,0.0,Nutritional/Metabolic factor
+E02,iroC,0.0,Nutritional/Metabolic factor
+E02,iroD,0.0,Nutritional/Metabolic factor
+E02,iroE,0.0,Nutritional/Metabolic factor
+E02,iroN,0.0,Nutritional/Metabolic factor
+E02,map,49.275841,Effector delivery system
+E02,neuB,0.0,Invasion
+E02,neuC,3.630069,Invasion
+E02,ompA,1479.064819,Invasion
+E02,papA,0.0,Adherence
+E02,papC,101.273697,Adherence
+E02,papF,16.940458,Adherence
+E02,papH,88.18203,Adherence
+E02,papI,0.0,Adherence
+E02,papX,0.0,Adherence
+E02,sfaA,0.0,Adherence
+E02,sfaC,0.0,Adherence
+E02,sfaD,0.0,Adherence
+E02,sfaF,0.0,Adherence
+E02,sfaG,0.0,Adherence
+E02,sfaH,0.0,Adherence
+E02,sfaS,0.0,Adherence
+E02,sfaX,0.0,Adherence
+E02,sfaY,0.0,Adherence
+B02,aslA,0.0,Invasion
+B02,chuA,769.807861,Nutritional/Metabolic factor
+B02,chuS,0.0,Nutritional/Metabolic factor
+B02,chuT,0.0,Nutritional/Metabolic factor
+B02,chuY,0.0,Nutritional/Metabolic factor
+B02,cnf1,0.0,Exotoxin
+B02,csgA,0.0,Adherence
+B02,csgB,0.0,Adherence
+B02,csgC,0.0,Adherence
+B02,entA,0.0,Nutritional/Metabolic factor
+B02,entB,0.0,Nutritional/Metabolic factor
+B02,entC,0.0,Nutritional/Metabolic factor
+B02,entD,0.0,Nutritional/Metabolic factor
+B02,entE,4112.765625,Nutritional/Metabolic factor
+B02,entF,409.944946,Nutritional/Metabolic factor
+B02,entS,0.0,Nutritional/Metabolic factor
+B02,fdeC,0.0,Adherence
+B02,fepA,0.0,Nutritional/Metabolic factor
+B02,fepB,0.0,Nutritional/Metabolic factor
+B02,fepC,0.0,Nutritional/Metabolic factor
+B02,fepD,0.0,Nutritional/Metabolic factor
+B02,fepG,0.0,Nutritional/Metabolic factor
+B02,fes,0.0,Nutritional/Metabolic factor
+B02,fimA,0.0,Adherence
+B02,fimA,0.0,Adherence
+B02,fimB,0.0,Adherence
+B02,fimC,0.0,Adherence
+B02,fimD,0.0,Adherence
+B02,fimE,0.0,Adherence
+B02,fimF,0.0,Adherence
+B02,fimG,0.0,Adherence
+B02,fimH,0.0,Adherence
+B02,fimI,0.0,Adherence
+B02,focA,0.0,Adherence
+B02,glrR,0.0,Effector delivery system
+B02,hlyA,0.0,Exotoxin
+B02,hlyC,0.0,Exotoxin
+B02,hlyD,0.0,Exotoxin
+B02,hlyD,0.0,Exotoxin
+B02,iroB,0.0,Nutritional/Metabolic factor
+B02,iroC,0.0,Nutritional/Metabolic factor
+B02,iroD,0.0,Nutritional/Metabolic factor
+B02,iroE,0.0,Nutritional/Metabolic factor
+B02,iroN,0.0,Nutritional/Metabolic factor
+B02,map,0.0,Effector delivery system
+B02,neuB,0.0,Invasion
+B02,neuC,0.0,Invasion
+B02,ompA,0.0,Invasion
+B02,papA,0.0,Adherence
+B02,papC,0.0,Adherence
+B02,papF,0.0,Adherence
+B02,papH,0.0,Adherence
+B02,papI,0.0,Adherence
+B02,papX,0.0,Adherence
+B02,sfaA,0.0,Adherence
+B02,sfaC,0.0,Adherence
+B02,sfaD,0.0,Adherence
+B02,sfaF,0.0,Adherence
+B02,sfaG,0.0,Adherence
+B02,sfaH,0.0,Adherence
+B02,sfaS,0.0,Adherence
+B02,sfaX,0.0,Adherence
+B02,sfaY,0.0,Adherence
+H01,aslA,1.482588,Invasion
+H01,chuA,27.399113,Nutritional/Metabolic factor
+H01,chuS,50.850147,Nutritional/Metabolic factor
+H01,chuT,25.658043,Nutritional/Metabolic factor
+H01,chuY,10.696899,Nutritional/Metabolic factor
+H01,cnf1,0.0,Exotoxin
+H01,csgA,0.0,Adherence
+H01,csgB,0.0,Adherence
+H01,csgC,0.0,Adherence
+H01,entA,28.89459,Nutritional/Metabolic factor
+H01,entB,104.279419,Nutritional/Metabolic factor
+H01,entC,93.032715,Nutritional/Metabolic factor
+H01,entD,24.462324,Nutritional/Metabolic factor
+H01,entE,66.514763,Nutritional/Metabolic factor
+H01,entF,35.969952,Nutritional/Metabolic factor
+H01,entS,27.966015,Nutritional/Metabolic factor
+H01,fdeC,3.689745,Adherence
+H01,fepA,90.422775,Nutritional/Metabolic factor
+H01,fepB,35.916168,Nutritional/Metabolic factor
+H01,fepC,0.0,Nutritional/Metabolic factor
+H01,fepD,44.668995,Nutritional/Metabolic factor
+H01,fepG,28.935175,Nutritional/Metabolic factor
+H01,fes,16.496748,Nutritional/Metabolic factor
+H01,fimA,6.733639,Adherence
+H01,fimA,10.43704,Adherence
+H01,fimB,25.955883,Adherence
+H01,fimC,0.0,Adherence
+H01,fimD,13.107142,Adherence
+H01,fimE,0.0,Adherence
+H01,fimF,0.0,Adherence
+H01,fimG,5.327927,Adherence
+H01,fimH,17.247709,Adherence
+H01,fimI,13.639597,Adherence
+H01,focA,84.502228,Adherence
+H01,glrR,48.777798,Effector delivery system
+H01,hlyA,0.0,Exotoxin
+H01,hlyC,0.0,Exotoxin
+H01,hlyD,20.721251,Exotoxin
+H01,hlyD,0.0,Exotoxin
+H01,iroB,86.982063,Nutritional/Metabolic factor
+H01,iroC,139.735779,Nutritional/Metabolic factor
+H01,iroD,159.183899,Nutritional/Metabolic factor
+H01,iroE,185.192566,Nutritional/Metabolic factor
+H01,iroN,398.373016,Nutritional/Metabolic factor
+H01,map,248.769547,Effector delivery system
+H01,neuB,0.0,Invasion
+H01,neuC,0.0,Invasion
+H01,ompA,662.022156,Invasion
+H01,papA,0.0,Adherence
+H01,papC,0.0,Adherence
+H01,papF,0.0,Adherence
+H01,papH,0.0,Adherence
+H01,papI,0.0,Adherence
+H01,papX,0.0,Adherence
+H01,sfaA,0.0,Adherence
+H01,sfaC,0.0,Adherence
+H01,sfaD,0.0,Adherence
+H01,sfaF,0.0,Adherence
+H01,sfaG,0.0,Adherence
+H01,sfaH,0.0,Adherence
+H01,sfaS,0.0,Adherence
+H01,sfaX,0.0,Adherence
+H01,sfaY,0.0,Adherence
+F02,aslA,11.767083,Invasion
+F02,chuA,406.30899,Nutritional/Metabolic factor
+F02,chuS,575.108826,Nutritional/Metabolic factor
+F02,chuT,119.70742,Nutritional/Metabolic factor
+F02,chuY,757.10199,Nutritional/Metabolic factor
+F02,cnf1,0.0,Exotoxin
+F02,csgA,2.558721,Adherence
+F02,csgB,0.0,Adherence
+F02,csgC,0.0,Adherence
+F02,entA,172.931915,Nutritional/Metabolic factor
+F02,entB,218.183823,Nutritional/Metabolic factor
+F02,entC,274.519714,Nutritional/Metabolic factor
+F02,entD,180.506271,Nutritional/Metabolic factor
+F02,entE,114.368629,Nutritional/Metabolic factor
+F02,entF,192.769485,Nutritional/Metabolic factor
+F02,entS,40.499142,Nutritional/Metabolic factor
+F02,fdeC,3.437962,Adherence
+F02,fepA,555.555603,Nutritional/Metabolic factor
+F02,fepB,48.717648,Nutritional/Metabolic factor
+F02,fepC,62.866219,Nutritional/Metabolic factor
+F02,fepD,79.011635,Nutritional/Metabolic factor
+F02,fepG,79.468605,Nutritional/Metabolic factor
+F02,fes,100.678154,Nutritional/Metabolic factor
+F02,fimA,37.292294,Adherence
+F02,fimA,0.0,Adherence
+F02,fimB,8.896775,Adherence
+F02,fimC,10.139809,Adherence
+F02,fimD,10.349972,Adherence
+F02,fimE,0.0,Adherence
+F02,fimF,0.0,Adherence
+F02,fimG,13.150299,Adherence
+F02,fimH,7.286412,Adherence
+F02,fimI,13.365105,Adherence
+F02,focA,535.429749,Adherence
+F02,glrR,44.580173,Effector delivery system
+F02,hlyA,0.0,Exotoxin
+F02,hlyC,0.0,Exotoxin
+F02,hlyD,44.667549,Exotoxin
+F02,hlyD,0.0,Exotoxin
+F02,iroB,0.0,Nutritional/Metabolic factor
+F02,iroC,0.0,Nutritional/Metabolic factor
+F02,iroD,0.0,Nutritional/Metabolic factor
+F02,iroE,0.0,Nutritional/Metabolic factor
+F02,iroN,0.0,Nutritional/Metabolic factor
+F02,map,60.037025,Effector delivery system
+F02,neuB,0.0,Invasion
+F02,neuC,0.0,Invasion
+F02,ompA,3710.263916,Invasion
+F02,papA,193.662521,Adherence
+F02,papC,403.980316,Adherence
+F02,papF,85.91848,Adherence
+F02,papH,661.745178,Adherence
+F02,papI,9.972419,Adherence
+F02,papX,4.445356,Adherence
+F02,sfaA,0.0,Adherence
+F02,sfaC,2.869972,Adherence
+F02,sfaD,0.0,Adherence
+F02,sfaF,0.0,Adherence
+F02,sfaG,0.0,Adherence
+F02,sfaH,0.0,Adherence
+F02,sfaS,0.0,Adherence
+F02,sfaX,0.0,Adherence
+F02,sfaY,0.0,Adherence
+H25361,aslA,1.775109,Invasion
+H25361,csgA,1.59565,Adherence
+H25361,entA,247.229904,Nutritional/Metabolic factor
+H25361,entB,370.964172,Nutritional/Metabolic factor
+H25361,entC,187.987274,Nutritional/Metabolic factor
+H25361,entD,384.720886,Nutritional/Metabolic factor
+H25361,entE,170.041977,Nutritional/Metabolic factor
+H25361,entF,300.233185,Nutritional/Metabolic factor
+H25361,entS,98.332634,Nutritional/Metabolic factor
+H25361,fdeC,0.691506,Adherence
+H25361,fepA,2114.731934,Nutritional/Metabolic factor
+H25361,fepB,103.461113,Nutritional/Metabolic factor
+H25361,fepC,76.586472,Nutritional/Metabolic factor
+H25361,fepD,45.76564,Nutritional/Metabolic factor
+H25361,fepG,59.431465,Nutritional/Metabolic factor
+H25361,fes,146.538086,Nutritional/Metabolic factor
+H25361,fimA,0.0,Adherence
+H25361,fimA,0.419533,Adherence
+H25361,fimB,7.454483,Adherence
+H25361,fimC,1.550111,Adherence
+H25361,fimD,0.941825,Adherence
+H25361,fimE,15.600451,Adherence
+H25361,fimH,10.689943,Adherence
+H25361,focA,66.005478,Adherence
+H25361,glrR,39.207424,Effector delivery system
+H25361,hlyD,12.581315,Exotoxin
+H25361,map,292.229797,Effector delivery system
+H25361,ompA,1883.107544,Invasion
