@@ -76,7 +76,7 @@ perform_pca_on_samples <- function(data_file, input_dir) {
   print(ggplot_object)
 }
 
-input_dir <- "/Users/josspa/UTI/"
+input_dir <- "/UTI/"
 
 # Perform PCA on OTU.csv and TU.csv
 perform_pca_on_samples("OTU.csv", input_dir)
