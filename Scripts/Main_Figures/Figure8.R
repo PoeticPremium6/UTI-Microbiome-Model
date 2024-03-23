@@ -204,12 +204,12 @@ library(RColorBrewer) # For color palettes
 
 # Assuming combined_data exists and is correctly formatted
 
-# Step 1: Filter for 'Context' samples and count frequencies
+# Filter for 'Context' samples and count frequencies
 context_samples_summary <- combined_data %>%
   filter(grepl("Context$", SampleName)) %>%
   count(SampleName, metabolite, name = "frequency")
 
-# Step 2: Identify top 20 metabolites based on total frequency
+#  Identify top 20 metabolites based on total frequency
 top_20_metabolites <- context_samples_summary %>%
   group_by(metabolite) %>%
   summarise(total_frequency = sum(frequency), .groups = 'drop') %>%
@@ -217,20 +217,20 @@ top_20_metabolites <- context_samples_summary %>%
   slice_head(n = 20) %>%
   pull(metabolite)
 
-# Step 3: Filter the dataset for these top 20 metabolites
+# Filter the dataset for these top 20 metabolites
 top_20_context_data <- context_samples_summary %>%
   filter(metabolite %in% top_20_metabolites)
 
 # Ensure steps 1 to 3 have been executed without error before proceeding.
 
-# Step 4: Prepare a color palette
+# Prepare a color palette
 n_samples <- length(unique(top_20_context_data$SampleName))
 palette <- brewer.pal(min(n_samples, 8), "Dark2")
 if (n_samples > 8) {
   palette <- colorRampPalette(brewer.pal(8, "Dark2"))(n_samples)
 }
 
-# Step 5: Create the plot for top 20 metabolite exchanges, with improvements
+# Create the plot for top 20 metabolite exchanges, with improvements
 plot <- ggplot(top_20_context_data, aes(x = reorder(metabolite, -frequency), y = frequency, fill = SampleName)) +
   geom_bar(stat = "identity", position = "stack") +
   coord_flip() +
