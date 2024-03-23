@@ -1,0 +1,77 @@
+library(tidyverse)
+library(caret)
+library(randomForest)
+library(gridExtra)
+
+# Load your data
+df <- read.csv("Clustering_New.csv")
+
+# Reshape the data from wide to long format
+df_long <- df %>%
+  gather(key = "patient_id_status", value = "abundance", -Metabolite) %>% 
+  separate(patient_id_status, into = c("patient_id", "status"), sep = "_")
+
+# Convert status to a binary factor
+df_long$status <- as.factor(ifelse(df_long$status == 'Control', 0, 1))
+
+# Pivot the data back to wide format for the machine learning algorithms
+df_wide <- df_long %>%
+  spread(key = Metabolite, value = abundance)
+
+# Preprocessing: Centering and scaling the features
+preProcValues <- preProcess(df_wide[, -(1:2)], method = c("center", "scale"))
+dfTransformed <- cbind(df_wide[, 1:2], predict(preProcValues, df_wide[, -(1:2)]))
+
+# Creating training and test datasets
+set.seed(123)
+trainIndex <- createDataPartition(dfTransformed$status, p = 0.8, list = FALSE, times = 1)
+dfTrain <- dfTransformed[trainIndex, ]
+dfTest <- dfTransformed[-trainIndex, ]
+
+# Ensure that the test set has the same columns as the training set
+common_cols <- intersect(names(dfTrain), names(dfTest))
+dfTest <- dfTest[, common_cols]
+# Random Forest for feature importance
+set.seed(123)
+rf <- randomForest(status ~ ., data = dfTrain, importance = TRUE, ntree = 500)
+
+# Look at the feature importance
+importance <- importance(rf)
+importance_df <- data.frame(Feature = row.names(importance), 
+                            MeanDecreaseAccuracy = importance[, "MeanDecreaseAccuracy"],
+                            MeanDecreaseGini = importance[, "MeanDecreaseGini"])
+
+# Filter for top 10 features based on MeanDecreaseAccuracy
+top10_accuracy <- importance_df %>% 
+  top_n(10, MeanDecreaseAccuracy)
+
+# Filter for top 10 features based on MeanDecreaseGini
+top10_gini <- importance_df %>% 
+  top_n(10, MeanDecreaseGini)
+
+# Plotting top 10 by Mean Decrease Accuracy with improved y-axis text styling
+p1 <- ggplot(top10_accuracy, aes(x = reorder(Feature, MeanDecreaseAccuracy), y = MeanDecreaseAccuracy)) +
+  geom_bar(stat = "identity", aes(fill = MeanDecreaseAccuracy)) +
+  scale_fill_gradient(low = "blue", high = "red") +
+  coord_flip() +
+  labs(title = "Top 10 Features by Mean Decrease Accuracy", y = "Mean Decrease Accuracy", x = "") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 14, face = "bold"), # Adjust size and face here
+        axis.title.y = element_text(size = 14, face = "bold"))
+
+# Plotting top 10 by Mean Decrease Gini with improved y-axis text styling
+p2 <- ggplot(top10_gini, aes(x = reorder(Feature, MeanDecreaseGini), y = MeanDecreaseGini)) +
+  geom_bar(stat = "identity", aes(fill = MeanDecreaseGini)) +
+  scale_fill_gradient(low = "blue", high = "red") +
+  coord_flip() +
+  labs(title = "Top 10 Features by Mean Decrease Gini", y = "Mean Decrease Gini", x = "") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 14, face = "bold"), # Adjust size and face here
+        axis.title.y = element_text(size = 14, face = "bold"))
+
+
+# Combine and save the plots
+p_combined <- grid.arrange(p1, p2, ncol = 1)
+
+# Save the combined plot
+ggsave("/UTI/Figures/Supplementary/Supp4_combined.png", plot = p_combined, width = 10, height = 12, units = "in")
