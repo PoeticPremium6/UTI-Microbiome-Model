@@ -1,1 +1,84 @@
+###SUPP FIGURE
+#Supp Figure 1
+#Compare OTUs and TUs
+library(ggplot2)
+library(tibble)
+library(dplyr)
+
+# Sequencing technology information
+seq_tech_data <- tibble::tribble(
+  ~Name, ~Sequencing_Technology,
+  "H25361", "Illumina MiSeq",
+  "H25362", "Illumina MiSeq",
+  "H25363", "Illumina MiSeq",
+  "H25364", "Illumina MiSeq",
+  "H25365", "Illumina MiSeq",
+  "A01", "Illumina NovaSeq",
+  "A02", "Illumina NovaSeq",
+  "B01", "Illumina NovaSeq",
+  "B02", "Illumina NovaSeq",
+  "C01", "Illumina NovaSeq",
+  "C02", "Illumina NovaSeq",
+  "D01", "Illumina NovaSeq",
+  "D02", "Illumina NovaSeq",
+  "E01", "Illumina NovaSeq",
+  "E02", "Illumina NovaSeq",
+  "F01", "Illumina NovaSeq",
+  "F02", "Illumina NovaSeq",
+  "G01", "Illumina NovaSeq",
+  "H01", "Illumina NovaSeq"
+)
+
+perform_pca_on_samples <- function(data_file, input_dir) {
+  # Construct the full path to the data file
+  full_path <- file.path(input_dir, data_file)
+  
+  # Read the data
+  df <- read.csv(full_path, row.names = 1)
+  
+  # Transpose the dataframe so that samples are rows and features are columns
+  df_t <- t(df)
+  
+  # Log-transform the data to improve normality
+  df_log <- log1p(df_t)
+  
+  # Perform PCA
+  pca_result <- prcomp(df_log, center = TRUE, scale. = TRUE)
+  
+  # Prepare a dataframe for ggplot
+  pca_df <- as.data.frame(pca_result$x)
+  pca_df$Sample <- row.names(pca_result$x)
+  
+  # Merge PCA data with sequencing technology information
+  pca_df <- left_join(pca_df, seq_tech_data, by = c("Sample" = "Name"))
+  
+  # Plot PCA: PC1 vs PC2, color by Sequencing Technology
+  ggplot_object <- ggplot(pca_df, aes(x = PC1, y = PC2, color = Sequencing_Technology)) +
+    geom_point(size = 4) +  # Increase the size of the points
+    xlab(paste0("PC1 - ", round((pca_result$sdev[1]^2 / sum(pca_result$sdev^2)) * 100, 2), "% Variance")) +
+    ylab(paste0("PC2 - ", round((pca_result$sdev[2]^2 / sum(pca_result$sdev^2)) * 100, 2), "% Variance")) +
+    ggtitle(paste("PCA of Samples in", data_file)) +
+    theme_minimal() +
+    theme(
+      legend.title = element_text(size = 12),  # Increase legend title size
+      legend.text = element_text(size = 10),  # Increase legend text size
+      plot.title = element_text(size = 14, face = "bold"),  # Bold and larger plot title
+      plot.margin = unit(c(1, 1, 1, 1), "cm"),  # Adjust plot margins
+      axis.text = element_text(size = 12),  # Larger axis text
+      axis.title = element_text(size = 12)  # Larger axis title
+    ) +
+    scale_color_manual(values = c("Illumina MiSeq" = "blue", "Illumina NovaSeq" = "red")) +
+    geom_text_repel(aes(label = Sample), size = 4, box.padding = 0.5)  # Use geom_text_repel for non-overlapping labels
+  
+  # Save the plot to the input directory
+  ggsave(filename = file.path(input_dir, paste0(sub(".csv", "", data_file), "_PCA_plot.png")), plot = ggplot_object, width = 10, height = 8)
+  
+  print(ggplot_object)
+}
+
+input_dir <- "/Users/josspa/UTI/"
+
+# Perform PCA on OTU.csv and TU.csv
+perform_pca_on_samples("OTU.csv", input_dir)
+perform_pca_on_samples("TU.csv", input_dir)
 
