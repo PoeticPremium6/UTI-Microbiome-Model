@@ -5,7 +5,7 @@ library(dplyr)     # For data manipulation
 library(readr)     # For read_csv
 
 # Read data from the specified path
-data <- read.csv("/Users/josspa/Community_Model/PA/PA.csv")
+data <- read.csv("PA.csv")
 
 # Transform the data into a long format without filtering
 data_long <- melt(data, id.vars = "Metabolite")
@@ -36,6 +36,11 @@ p <- ggplot(data_long, aes(x = Metabolite, y = variable)) +
   geom_hline(yintercept = seq(2.5, length(unique(data_long$variable)), by = 2), color = "black", size = 1.5)  # Maintain line placement
 
 # Display the plot
+print(p)
+
+# Save the plot in the specified supplementary directory with increased dimensions
+ggsave("/UTI/Figures/Supplementary/Supp3.png", p, width = plot_width, height = plot_height, units = "in")
+
 print(p)
 
 # Save the plot in the specified supplementary directory with increased dimensions
