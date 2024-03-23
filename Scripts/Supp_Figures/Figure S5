@@ -1,0 +1,82 @@
+#Random Forest Statistics
+library(pROC)
+library(caret)
+
+# Make predictions on the test dataset
+predictions <- predict(rf, newdata = dfTest)
+
+# Convert factor levels to numeric values
+dfTest$status <- as.numeric(dfTest$status) - 1
+predictions <- as.numeric(predictions) - 1
+
+# Compute ROC curve
+roc_obj <- roc(dfTest$status, predictions)
+
+# Plot the ROC curve
+roc_plot <- ggroc(roc_obj) +
+  labs(x = "False Positive Rate", y = "True Positive Rate",
+       title = "") +
+  annotate("text", x = 0.6, y = 0.1, # You may adjust x and y to fit the data in your desired position
+           label = sprintf("AUC: %.5f\nPrecision: %.3f\nRecall: %.1f\nF1 Score: %.1f",
+                           0.66667, 0.333, 1, 0.5), 
+           hjust = 0, vjust = 0, size = 5.5, color = "black") +
+  theme_minimal()
+ggsave("/Users/josspa/UTI/Figures/Supplementary/Supp8A.png", 
+       plot = roc_plot, width = 7, height = 6, units = "in")
+# Print the ROC curve
+print(roc_plot)
+
+# Calculate evaluation metrics
+auc <- auc(roc_obj)
+conf_matrix <- confusionMatrix(dfTest$status, predictions)
+
+# Extract evaluation metrics for the positive class
+precision <- conf_matrix$byClass[["Pos Pred Value"]]
+recall <- conf_matrix$byClass[["Sensitivity"]]
+f1_score <- conf_matrix$byClass[["F1"]]
+
+# Print evaluation metrics
+cat("AUC: ", auc, "\n")
+cat("Precision: ", precision, "\n")
+cat("Recall: ", recall, "\n")
+cat("F1 Score: ", f1_score, "\n")
+
+
+
+# Recursive Feature Elimination (RFE) with top-k feature selection using caret package
+library(caret)
+
+# Create a control object for RFE
+ctrl <- rfeControl(functions = rfFuncs, method = "cv", number = 10)
+
+# Perform RFE with top-k feature selection
+k <- 11  # Number of top features to select
+rfe_result <- rfe(dfTrain[, -1], dfTrain$status, sizes = k, rfeControl = ctrl)
+
+# Get the selected features
+selected_features <- predictors(rfe_result)
+selected_features
+
+
+# Extracting the results from rfe_result
+library(ggplot2)
+
+# Extracting the results from rfe_result
+results <- rfe_result$results
+
+# Plotting
+p <- ggplot(results, aes(x = Variables)) +
+  geom_line(aes(y = Accuracy, color = "Accuracy")) +
+  geom_line(aes(y = Kappa, color = "Kappa")) +
+  geom_point(aes(y = Accuracy, color = "Accuracy")) +
+  geom_point(aes(y = Kappa, color = "Kappa")) +
+  geom_errorbar(aes(ymin = Accuracy - AccuracySD, ymax = Accuracy + AccuracySD, color = "Accuracy")) +
+  geom_errorbar(aes(ymin = Kappa - KappaSD, ymax = Kappa + KappaSD, color = "Kappa")) +
+  labs(title = "Performance of RFE over Different Subset Sizes", x = "Number of Variables", y = "Performance Metric") +
+  scale_color_manual(values = c("Accuracy" = "blue", "Kappa" = "red"), name = "Metric") +
+  theme_minimal() +
+  geom_text(aes(x = Variables, y = Accuracy, label = sprintf("Accuracy: %.2f", Accuracy)), vjust = -1.5) +
+  geom_text(aes(x = Variables, y = Kappa, label = sprintf("Kappa: %.2f", Kappa)), vjust = 1.5)
+
+# Save the plot to a file
+ggsave(filename = "/UTI/Figures/Supplementary/Supp8B.png", plot = p, width = 10, height = 6, dpi = 300)
