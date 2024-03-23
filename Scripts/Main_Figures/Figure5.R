@@ -91,21 +91,17 @@ create_plot <- function(data, filename) {
 # Create and save the plot for significant metabolites (Supp5C)
 create_plot(significant_data, "Plot1.png")
 
-#Font size 7
-# Create and save the modified plot for less significant metabolites with a narrower range (Supp5D)
-create_plot(less_significant_data_narrowed, "Plot2.png")
-
 # Correcting the extraction of metabolites
 
-# 1. Filter significant metabolites
+# Filter significant metabolites
 significant_metabolites <- metabolite_ttest_results %>% 
   filter(adjusted_p.value < 0.05) %>% 
   arrange(adjusted_p.value)
 
-# 2. Identify metabolites with strongest differences
+# Identify metabolites with strongest differences
 strongest_differences <- head(significant_metabolites, 5)
 
-# 3. Identify metabolites with least differences (i.e., most similarity)
+# Identify metabolites with least differences (i.e., most similarity)
 most_similar <- tail(significant_metabolites, 5)
 
 # Print results for verification
@@ -146,9 +142,7 @@ sample_names <- c("A1", "A2", "B1", "B2", "C1", "C2", "D1", "D2",
                   "E1", "E2", "F1", "F2", "G1", "H1", "H25361",
                   "H25362", "H25363", "H25364", "H25365")
 
-# Assuming a need to specify community based on some criteria, for demonstration:
 # Let's assume samples starting with "H" or containing "2536" are considered "E.coli", others are "L.iners"
-# Adjust this based on your actual criteria for distinguishing between communities
 
 # Convert to longer format and extract community and condition
 library(ggplot2)
