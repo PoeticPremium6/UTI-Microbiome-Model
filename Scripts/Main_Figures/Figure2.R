@@ -10,8 +10,8 @@ generate_custom_palette <- function(n) {
   hcl(h = hues, l = 40, c = 100)[1:n]
 }
 
-path_to_OTU <- "Merged_Counts.tsv"
-path_to_TAX <- "Merged_Tax.tsv"
+path_to_OTU <- "/rRNA_Counts_Clean.tsv"
+path_to_TAX <- "/rRNA_Tax_Clean.tsv"
 
 # Import the OTU data
 OTU <- read.delim(path_to_OTU, header = TRUE, sep = "\t", check.names = FALSE)
