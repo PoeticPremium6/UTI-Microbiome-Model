@@ -286,3 +286,36 @@ plot <- ggplot(shannon_div_df, aes(x = Sample, y = Shannon)) +
 ggsave("/shannon_diversity_plot.png",
        plot, width = 10, height = 6)
 
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Ensure species names are in the correct order
+filtered_rel_abundance_species <- filtered_rel_abundance_species %>%
+  mutate(Species = factor(Species, levels = rev(sort(unique(Species)))))  # Reverse order for y-axis
+
+# Create the plot with purple boxes and black dots
+p_dotplot <- ggplot(filtered_rel_abundance_species, aes(x = Sample, y = Species)) +
+  # Add purple box background for presence
+  geom_tile(data = subset(filtered_rel_abundance_species, Abundance > 0),
+            fill = "purple", color = NA, alpha = 0.3, width = 0.9, height = 0.9) +
+  # Add solid black dots with size based on abundance
+  geom_point(aes(size = Abundance), color = "black") +
+  scale_size_continuous(range = c(2, 8), breaks = c(200, 500, 1000), labels = c("200", "500", "1000")) +  # Customize size legend
+  labs(x = "Sample", y = "Species", size = "Abundance") +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "bold"),  # Rotate x-axis labels
+    axis.text.y = element_text(face = "bold"),  # Bold y-axis labels
+    axis.title = element_text(face = "bold", size = 14),  # Bold and larger axis titles
+    panel.grid.major = element_blank(),  # Remove major grid lines
+    panel.grid.minor = element_blank()   # Remove minor grid lines
+  ) +
+  guides(fill = "none")  # Remove fill legend for background color
+
+# Display the plot
+p_dotplot
+
+# Save the plot to the specified path
+output_file_path_dotplot <- "/Figure2_species_dotplot.png"
+ggsave(filename = output_file_path_dotplot, plot = p_dotplot, width = 10, height = 8)
