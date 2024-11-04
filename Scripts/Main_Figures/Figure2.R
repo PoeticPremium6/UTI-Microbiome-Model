@@ -305,8 +305,8 @@ p_dotplot <- ggplot(filtered_rel_abundance_species, aes(x = Sample, y = Species)
   labs(x = "Sample", y = "Species", size = "Abundance") +
   theme_minimal() +
   theme(
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "bold"),  # Rotate x-axis labels
-    axis.text.y = element_text(face = "bold"),  # Bold y-axis labels
+    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "bold", size = 12),  # Larger x-axis tick labels
+    axis.text.y = element_text(face = "bold", size = 12),  # Larger y-axis tick labels
     axis.title = element_text(face = "bold", size = 14),  # Bold and larger axis titles
     panel.grid.major = element_blank(),  # Remove major grid lines
     panel.grid.minor = element_blank()   # Remove minor grid lines
