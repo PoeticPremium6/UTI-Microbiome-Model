@@ -242,8 +242,6 @@ library(patchwork)
 combined_plot <- pca_samples_plot / p +
   plot_layout(heights = c(1, 1))
 
-# Adjust the aspect ratio to make the combined plot more box-shaped
-# This command is illustrative; the aspect ratio might need adjustment
 combined_plot <- combined_plot + plot_layout(guides = "collect") & 
   theme(aspect.ratio = 1)
 # Display the combined plot
@@ -251,4 +249,40 @@ print(combined_plot)
 
 # Save the combined plot to a file
 ggsave("Combined_PCA_and_Diversity_Plot.png", combined_plot, width = 10, height = 16, dpi = 300)
+
+                                          
+# Load necessary library
+library(ggplot2)
+
+# Sample names
+sample_names <- c("A01", "A02", "B01", "B02", "C01", "C02", "D01", "D02",
+                  "E01", "E02", "F01", "F02", "G01", "H01", "H25361",
+                  "H25362", "H25363", "H25364", "H25365")
+
+# Shannon diversity values
+shannon_div <- c(2.0695388, 0.7644332, 1.1369565, 1.6857164, 1.7876022,
+                 0.9545996, 1.4798002, 1.3059761, 0.9599115, 1.1656087,
+                 1.1563878, 0.7621552, 2.0830254, 1.7201654, 1.0412371,
+                 0.9279537, 1.0937679, 0.9792370, 1.1679389)
+
+# Combine into a data frame
+shannon_div_df <- data.frame(
+    Sample = sample_names,
+    Shannon = shannon_div,
+    stringsAsFactors = FALSE  
+)
+
+# Create the plot
+plot <- ggplot(shannon_div_df, aes(x = Sample, y = Shannon)) +
+    geom_bar(stat = "identity", fill = "purple") +
+    labs(x = "Sample Names", y = "Alpha Diversity Measure (Shannon Index)") +
+    theme(axis.title.x = element_text(face = "bold"),  # Bold x-axis title
+          axis.title.y = element_text(face = "bold"),  # Bold y-axis title
+          axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "bold"),  # Vertical x-axis ticks
+          axis.text.y = element_text(face = "bold")) +  # Bold y-axis ticks
+    theme_minimal()
+
+# Save the plot
+ggsave("/shannon_diversity_plot.png",
+       plot, width = 10, height = 6)
 
