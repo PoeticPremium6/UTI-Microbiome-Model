@@ -1,54 +1,83 @@
 #!/bin/bash
 
-# Load necessary modules
-module load gcc12-env/12.1.0
-module load miniconda3/4.12.0
+# Activate the Conda environment
+conda activate rnaseq_env
 
-# Define directories
-HISAT2_DIR="/Software/hisat2-2.1.0"
-GENOMES_DIR="/rUTI/Final/Genomes"
-GENOME_INDEX_DIR="/rUTI/Final/Genome_Index"
-RNA_DIR="/rUTI/Final/mRNA"
-COUNTS_DIR="/rUTI/Final/Counts"
-SUMMARY_DIR="/rUTI/Final/Summary"
-TRANSCRIPTOME_DIR="/rUTI/Transcriptome"
-GENE_ABUNDANCE_DIR="/rUTI/Gene_Abundance"
+# Add HISAT2 and FeatureCounts to the PATH
+export PATH=$PATH:hisat2-2.1.0
 
-# Example for Escherichia coli
-# Build genome index for Escherichia coli (repeat for other genomes as identified in phyloseq analysis)
-cd $HISAT2_DIR
-hisat2-build $GENOMES_DIR/Escherichia_coli_genomic.fna $GENOME_INDEX_DIR/Escherichia_coli
+# Define file paths
+SAMPLE="H25365_mRNA_cdhit"  # Modify for the actual sample name as necessary
+CDHIT_INPUT_DIR="CD-HIT"
+CDHIT_INPUT="${CDHIT_INPUT_DIR}/${SAMPLE}"  # Assuming it's a single-end read file
+GENOME_DIR="New_Genomes"
+ANNOTATION_DIR="New_Gene_Annotations"
+OUTPUT_DIR="Alignment_Output"
 
-# Define an array of samples
-samples=("H25361" "H25362" "H25363" "H25364" "H25365")
+# Create a separate directory for gene counts
+GENE_COUNTS_DIR="${OUTPUT_DIR}/gene_counts"
+mkdir -p "$GENE_COUNTS_DIR"  # Create the gene_counts folder if it doesn't exist
 
-# Align reads to Escherichia coli index for each sample
-# Repeat this step for other microbes identified in your phyloseq analysis
-for sample in "${samples[@]}"; do
-    ./hisat2 --all --secondary -p 8 --dta -x $GENOME_INDEX_DIR/Escherichia_coli -1 $RNA_DIR/${sample}_R1_mRNA.fastq -2 $RNA_DIR/${sample}_R2_mRNA.fastq -S $COUNTS_DIR/${sample}_Escherichia_coli.sam --summary-file $SUMMARY_DIR/${sample}_Escherichia_coli
+# Check if the CD-hit input file exists
+if [ ! -f "$CDHIT_INPUT" ]; then
+    echo "Error: CD-hit input file not found at $CDHIT_INPUT"
+    exit 1
+fi
+
+# Loop over all genome index files in the GENOME_DIR
+for GENOME_INDEX in "$GENOME_DIR"/*.fna; do
+
+    # Extract the genome name (basename without extension)
+    GENOME_NAME=$(basename "$GENOME_INDEX" .fna)
+
+    # Build the annotation file name based on the genome name
+    ANNOTATION_FILE="${ANNOTATION_DIR}/${GENOME_NAME}.gff"
+
+    # Debugging: print the annotation file path
+    echo "Looking for annotation file: $ANNOTATION_FILE"
+
+    # Check if the annotation file exists
+    if [ ! -f "$ANNOTATION_FILE" ]; then
+        echo "Warning: Annotation file not found for ${GENOME_NAME}. Skipping this genome."
+        continue
+    fi
+
+    echo "Processing genome: ${GENOME_NAME}"
+
+    # Build HISAT2 index (if not already created)
+    HISAT2_INDEX="${GENOME_DIR}/${GENOME_NAME}"
+    if [ ! -f "${HISAT2_INDEX}.1.ht2" ]; then
+        echo "HISAT2 index not found for ${GENOME_NAME}. Building index..."
+        hisat2-build "$GENOME_INDEX" "$HISAT2_INDEX"
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to build HISAT2 index for ${GENOME_NAME}."
+            continue
+        fi
+    fi
+
+    # Run HISAT2 alignment for each genome
+    hisat2 -x "$HISAT2_INDEX" -U "$CDHIT_INPUT" -S "${OUTPUT_DIR}/${GENOME_NAME}_${SAMPLE}.sam"
+    if [ $? -ne 0 ]; then
+        echo "HISAT2 alignment failed for ${GENOME_NAME}."
+        continue
+    fi
+
+    # Convert SAM to BAM, sort, and index
+    samtools view -S -b "${OUTPUT_DIR}/${GENOME_NAME}_${SAMPLE}.sam" > "${OUTPUT_DIR}/${GENOME_NAME}_${SAMPLE}.bam"
+    samtools sort "${OUTPUT_DIR}/${GENOME_NAME}_${SAMPLE}.bam" -o "${OUTPUT_DIR}/${GENOME_NAME}_${SAMPLE}_sorted.bam"
+    samtools index "${OUTPUT_DIR}/${GENOME_NAME}_${SAMPLE}_sorted.bam"
+
+    # Generate gene-level counts using FeatureCounts
+    featureCounts -T 4 -a "$ANNOTATION_FILE" -g "ID" -o "${GENE_COUNTS_DIR}/${GENOME_NAME}_${SAMPLE}_gene_counts.txt" "${OUTPUT_DIR}/${GENOME_NAME}_${SAMPLE}_sorted.bam"
+    if [ $? -ne 0 ]; then
+        echo "FeatureCounts failed for ${GENOME_NAME}."
+        continue
+    fi
+
 done
 
-# Convert SAM to BAM, sort, and index for Escherichia coli (repeat for other microbes)
-module load samtools
-for sample in "${samples[@]}"; do
-    samtools view -S -b $COUNTS_DIR/${sample}_Escherichia_coli.sam > $COUNTS_DIR/${sample}_Escherichia_coli.bam
-    samtools sort $COUNTS_DIR/${sample}_Escherichia_coli.bam -o $COUNTS_DIR/uniq_${sample}_Escherichia_coli_sorted.bam
-    samtools index $COUNTS_DIR/uniq_${sample}_Escherichia_coli_sorted.bam
-done
+# Deactivate environment
+conda deactivate
 
-# Assemble transcriptomes using StringTie for Escherichia coli
-# Repeat for other microbes as necessary
-source activate myjupyterlabenv
-for sample in "${samples[@]}"; do
-    stringtie $COUNTS_DIR/uniq_${sample}_Escherichia_coli_sorted.bam -p 8 -G $GENOMES_DIR/Gene_Annotations/Escherichia_coli.gff -e -B -o $TRANSCRIPTOME_DIR/transcripts_Escherichia_coli_${sample}.gff -A $GENE_ABUNDANCE_DIR/gene_abundance_Escherichia_coli_${sample}.tsv
-done
+echo "Gene-level counts generated for all genomes in $GENE_COUNTS_DIR."
 
-# Merge all transcripts to assemble the Escherichia coli transcriptome
-# This should be repeated for each microbe identified
-stringtie --merge -G $GENOMES_DIR/Gene_Annotations/Escherichia_coli.gff $(printf " %s" "${samples[@]/#/$TRANSCRIPTOME_DIR/transcripts_Escherichia_coli_}.gff") -o $TRANSCRIPTOME_DIR/Escherichia_coli_Transcriptome.gtf -A $TRANSCRIPTOME_DIR/gene_abundance_Escherichia_coli.tsv
-
-# Final counting with HTSeq for Escherichia coli
-# This step should be repeated for each microbe identified
-for sample in "${samples[@]}"; do
-    htseq-count --format=bam --order=name --stranded=no -m union -a 20 -t exon -i gene_id $COUNTS_DIR/uniq_${sample}_Escherichia_coli_sorted.bam $TRANSCRIPTOME_DIR/Escherichia_coli_Transcriptome.gtf > $TRANSCRIPTOME_DIR/Escherichia_coli_${sample}_htseq_counts.out
-done
