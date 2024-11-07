@@ -1,3 +1,51 @@
+#!/bin/bash
+
+# Set directories
+STRINGTIE_DIR="/work_beegfs/sukem113/Software/stringtie-2.0.3"
+ALIGNMENT_DIR="/work_beegfs/sukem113/rUTI/Final/Alignment_Output"
+ANNOTATION_DIR="/work_beegfs/sukem113/rUTI/Final/New_Gene_Annotations"
+TRANSCRIPTOME_DIR="/work_beegfs/sukem113/rUTI/Final/New_Transcriptome"
+ABUNDANCE_DIR="/work_beegfs/sukem113/rUTI/Final/New_Gene_Abundance"
+GFF_PREFIX="GCF_000013265.1_ASM1326v1_UTI89"
+GFF_FILE="${ANNOTATION_DIR}/${GFF_PREFIX}.gff"
+
+# Initialize the master file with the header (Gene ID, Gene Name, and sample names)
+MASTER_TSV="${ABUNDANCE_DIR}/master_gene_abundance_UTI89.tsv"
+echo -e "Gene ID\tGene Name" > "$MASTER_TSV"
+
+# Loop through each gene abundance file and extract TPM data
+for FILE in ${ABUNDANCE_DIR}/gene_abundance_${GFF_PREFIX}_*.tsv; do
+    SAMPLE_NAME=$(basename "$FILE" .tsv)
+    
+    # Extract header (Gene ID, Gene Name, and TPM) from the current file
+    if [ ! -f "$MASTER_TSV" ]; then
+        # Add sample name to the header of the master file if it doesn't already exist
+        echo -e "Gene ID\tGene Name\t${SAMPLE_NAME}" >> "$MASTER_TSV"
+    fi
+
+    # Extract Gene ID, Gene Name, and TPM values from each file
+    awk -F'\t' 'NR>1 {print $1"\t"$2"\t"$NF}' "$FILE" > temp_file
+
+    # Merge the TPM data with the master file
+    while read -r gene_id gene_name tpm_value; do
+        # Check if the gene is already in the master file
+        if ! grep -q "^$gene_id" "$MASTER_TSV"; then
+            # If gene is not in the master file, add it with TPM value for this sample
+            echo -e "$gene_id\t$gene_name\t$tpm_value" >> "$MASTER_TSV"
+        else
+            # If gene is already in the master file, append the TPM value for this sample
+            sed -i "/^$gene_id/s/$/\t$tpm_value/" "$MASTER_TSV"
+        fi
+    done < temp_file
+
+    # Clean up temporary file
+    rm temp_file
+done
+
+echo "StringTie processing, merging of GFF files and gene abundance files completed successfully."
+
+##############################################
+
 library(tidyverse)
 library(RColorBrewer)  # For accessing color palettes
 library(scales)        # For formatting the axis labels
