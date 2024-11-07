@@ -1,18 +1,20 @@
 #!/bin/bash
 
 # Activate the Conda environment
+module load gcc12-env/12.1.0
+module load miniconda3/4.12.0
 conda activate rnaseq_env
 
 # Add HISAT2 and FeatureCounts to the PATH
-export PATH=$PATH:hisat2-2.1.0
+export PATH=$PATH:/work_beegfs/sukem113/Software/hisat2-2.1.0
 
 # Define file paths
-SAMPLE="H25365_mRNA_cdhit"  # Modify for the actual sample name as necessary
-CDHIT_INPUT_DIR="CD-HIT"
+SAMPLE="A01_mRNA_cdhit"  # Modify for the actual sample name as necessary
+CDHIT_INPUT_DIR="/CD-HIT"
 CDHIT_INPUT="${CDHIT_INPUT_DIR}/${SAMPLE}"  # Assuming it's a single-end read file
-GENOME_DIR="New_Genomes"
-ANNOTATION_DIR="New_Gene_Annotations"
-OUTPUT_DIR="Alignment_Output"
+GENOME_DIR="/New_Genomes"
+ANNOTATION_DIR="/New_Gene_Annotations"
+OUTPUT_DIR="/Alignment_Output"
 
 # Create a separate directory for gene counts
 GENE_COUNTS_DIR="${OUTPUT_DIR}/gene_counts"
@@ -80,4 +82,34 @@ done
 conda deactivate
 
 echo "Gene-level counts generated for all genomes in $GENE_COUNTS_DIR."
+
+##################################
+#!/bin/bash
+
+# Set directories
+STRINGTIE_DIR="Software/stringtie-2.0.3"
+ALIGNMENT_DIR="/Alignment_Output"
+ANNOTATION_DIR="/New_Gene_Annotations"
+TRANSCRIPTOME_DIR="/New_Transcriptome"
+ABUNDANCE_DIR="/New_Gene_Abundance"
+GFF_PREFIX="GCF_030812875.1_ASM3081287v1_P_koenoeneniae"
+GFF_FILE="${ANNOTATION_DIR}/${GFF_PREFIX}.gff"
+
+# Create output directories if they don't exist
+mkdir -p "$TRANSCRIPTOME_DIR" "$ABUNDANCE_DIR"
+
+# Run StringTie for each BAM file
+for BAM_FILE in ${ALIGNMENT_DIR}/${GFF_PREFIX}_*_mRNA_cdhit_sorted.bam; do
+    SAMPLE_NAME=$(basename "$BAM_FILE" | sed "s/_mRNA_cdhit_sorted.bam//")
+    OUTPUT_GFF="${TRANSCRIPTOME_DIR}/${SAMPLE_NAME}.gff"
+    OUTPUT_TSV="${ABUNDANCE_DIR}/gene_abundance_${SAMPLE_NAME}.tsv"
+    
+    "${STRINGTIE_DIR}/stringtie" "$BAM_FILE" -p 8 -G "$GFF_FILE" -e -B -o "$OUTPUT_GFF" -A "$OUTPUT_TSV"
+done
+
+# Merge all GFF files into a final transcriptome
+GFF_LIST=$(ls ${TRANSCRIPTOME_DIR}/${GFF_PREFIX}_*.gff | tr '\n' ' ')
+"${STRINGTIE_DIR}/stringtie" --merge -G "$GFF_FILE" -o "${TRANSCRIPTOME_DIR}/P_koenoeneniae_transcriptome.gff" $GFF_LIST
+
+echo "StringTie processing and merging completed successfully."
 
