@@ -245,7 +245,7 @@ write.csv(otu_normalized_df, file = output_csv_path, row.names = TRUE)
 print(head(otu_normalized_df))
 
 otu_normalized_df$Species <- factor(rownames(otu_normalized_df), 
-                                    levels http://127.0.0.1:38295/graphics/df049fd8-f917-4f4a-ae55-bac6e87bdbd4.png= sort(unique(rownames(otu_normalized_df)), decreasing = TRUE))
+                                    levels = sort(unique(rownames(otu_normalized_df)), decreasing = TRUE))
 
 # Reshape normalized data for plotting
 # Convert to long format to use "Sample" and "Species" in ggplot
