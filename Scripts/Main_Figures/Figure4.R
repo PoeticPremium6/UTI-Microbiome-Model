@@ -1,185 +1,289 @@
 # Load necessary libraries
+library(dplyr)
 library(ggplot2)
-library(dplyr)
 library(tidyr)
-library(readr)
-library(patchwork)
+library(stats)
+library(readxl)
 
-# Load the data
-data <- read.csv("Biomass.csv")
+data_path <- "Subsystems_Merged.xlsx"
+data <- read_excel(data_path)
 
-# Transpose and prepare data for PCA
-data_for_pca <- t(data[, -1])
-nonconst_cols <- apply(data_for_pca, 2, var) > 0
-data_for_pca <- data_for_pca[, nonconst_cols]
-
-# Perform PCA
-pca_result <- prcomp(data_for_pca, scale. = TRUE)
-pca_data <- as.data.frame(pca_result$x[, 1:2])
-pca_data$Condition <- rownames(pca_data)
-pca_data$Group <- gsub("(\\D+)(\\d+).*", "\\1\\2", pca_data$Condition)
-pca_data$IsContext <- grepl("Context", pca_data$Condition)
-
-# Adjust MarkerLabel to "Context" and "non-Context"
-pca_data$MarkerLabel <- ifelse(pca_data$IsContext, "Context", "non-Context")
-
-pca_data$PairKey <- gsub("(Control|Context)$", "", pca_data$Condition) # Key for pairing Control and Context
-
-# Custom color palette
-custom_palette <- c(
-  "#D55E00", "#E69F00", "#F0E442", "#009E73", "#56B4E9",
-  "#0072B2", "#CC79A7", "#999999", "#FF6666", "#77AC30",
-  "#EDB120", "#7E2F8E", "#4DBEEE", "#A2142F", "#6666FF",
-  "#FF00FF", "#00FFFF", "#CCFF00", "#FF9999"
-)
-
-# Calculate the proportion of variance explained by each principal component
-variance_explained <- pca_result$sdev^2 / sum(pca_result$sdev^2)
-variance_explained_percent <- variance_explained * 100
-
-# Update the PCA plot to include variance explained in the axis titles
-p_pca <- ggplot(pca_data, aes(x = PC1, y = PC2, color = Group)) +
-  geom_line(aes(group = PairKey), alpha = 0.5) +  # Draw lines between pairs
-  geom_point(aes(shape = MarkerLabel), size = 4) +
-  scale_shape_manual(values = c("non-Context" = 16, "Context" = 17)) +
-  scale_color_manual(values = custom_palette) +
-  labs(x = paste("PC1 (", sprintf("%.2f%%", variance_explained_percent[1]), " variance explained)", sep=""),
-       y = paste("PC2 (", sprintf("%.2f%%", variance_explained_percent[2]), " variance explained)", sep="")) +
-  theme_minimal() +
-  theme(axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        legend.title = element_text(size = 12, face = "bold"),
-        legend.position = "right",
-        legend.text = element_text(face = "bold", size = 12)) +
-  coord_fixed(ratio = 1.5)
-
-# Display the updated PCA plot
-print(p_pca)
-
-# Bar Plot Data Preparation with Ordered Samples
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-
-# Assuming 'data' has been loaded
-# Prepare the bar_data with proper group naming
-bar_data <- data %>%
-  pivot_longer(cols = -Metabolites, names_to = "Sample", values_to = "Value") %>%
-  mutate(
-    Group = ifelse(grepl("Control", Sample), "non-Context", "Context"), # Rename groups to "context" and "non-context"
-    SampleID = gsub("(Control|Context)", "", Sample),
-    SampleID = gsub("_$", "", SampleID) # Remove trailing underscore
-  ) %>%
-  group_by(Group, SampleID) %>%
-  summarise(TotalFlux = sum(Value), .groups = 'drop') %>%
-  ungroup()
-
-# Ensure the SampleID factor levels are set correctly
-bar_data$SampleID <- factor(bar_data$SampleID, levels = unique(bar_data$SampleID))
-
-# Use your existing custom_palette for coloring
-custom_palette <- c(
-  "#D55E00", "#E69F00", "#F0E442", "#009E73", "#56B4E9",
-  "#0072B2", "#CC79A7", "#999999", "#FF6666", "#77AC30",
-  "#EDB120", "#7E2F8E", "#4DBEEE", "#A2142F", "#6666FF",
-  "#FF00FF", "#00FFFF", "#CCFF00", "#FF9999"
-)
-
-# Adjusted Bar Plot for Stacked Visualization with updated group names
-p_bar_stacked_custom_palette <- ggplot(bar_data, aes(x = Group, y = TotalFlux, fill = SampleID)) +
-  geom_bar(stat = "identity", position = "stack") +
-  scale_fill_manual(values = custom_palette[1:length(unique(bar_data$SampleID))]) + # Apply custom color palette with dynamic length based on SampleID
-  theme_minimal() +
-  labs(x = "", y = "Total Metabolic Flux / Biomass", fill = "Sample ID") +
-  theme(axis.text.x = element_text(angle = 0, hjust = 1, vjust = 0.5, size = 12, face = "bold"),
-        axis.title.x = element_text(size = 14, face = "bold"), 
-        axis.title.y = element_text(size = 14, face = "bold"),
-        legend.title = element_text(size = 12, face = "bold"),
-        legend.text = element_text(size = 12, face = "bold"),
-        legend.position = "right")
-
-# Display the plot
-print(p_bar_stacked_custom_palette)
-
-
-
-# Combine PCA and Bar plots side by side without collecting legends
-combined_plot <- p_pca + p_bar_stacked_custom_palette + plot_layout(ncol = 2)
-
-# Save the Combined Plot
-ggsave("Combined_PCA_Bar.png", combined_plot, width = 14, height = 7)
-
-# Assuming pca_data is already prepared
-library(dplyr)
-
-library(tidyr)
-library(dplyr)
-
-# Assuming 'data' is your original dataframe
-data_long <- pivot_longer(data, cols = -Metabolites, 
-                          names_to = "Sample_Condition", 
-                          values_to = "Flux")
-
-# Separate Sample and Condition
-data_long <- data_long %>%
+# Reshape the data to long format for analysis
+data_long <- data %>%
+  pivot_longer(cols = -Subsystems, names_to = c("Sample_Condition"), values_to = "Activity") %>%
   separate(Sample_Condition, into = c("Sample", "Condition"), sep = "_")
 
-# Calculate total flux for each condition within each sample
-total_flux <- data_long %>%
-  group_by(Sample, Condition) %>%
-  summarise(TotalFlux = sum(Flux), .groups = 'drop')
+# View the reshaped data
+head(data_long)
 
-# Ensure total_flux is in the correct format
-total_flux$Sample <- factor(total_flux$Sample)
-total_flux$Condition <- factor(total_flux$Condition)
+# Perform a paired t-test (or Wilcoxon test if the data is not normally distributed)
+test_results <- data_long %>%
+  group_by(Subsystems) %>%
+  summarise(
+    p_value = t.test(Activity ~ Condition, paired = TRUE)$p.value
+  )
 
-# Pivot wider to have Control and Context side-by-side
-flux_wide <- pivot_wider(total_flux, names_from = Condition, values_from = TotalFlux)
+# Adjust p-values for multiple comparisons using Benjamini-Hochberg
+test_results$adj_p_value <- p.adjust(test_results$p_value, method = "BH")
 
-# Calculate Euclidean distance (simple subtraction in this context as we're dealing with a single dimension)
-flux_wide$EuclideanDistance <- abs(flux_wide$Control - flux_wide$Context)
+# View the results with adjusted p-values
+head(test_results)
+# Filter for significant results (adjusted p-value < 0.05)
+# Filter for significant results (adjusted p-value < 0.05)
+significant_results <- test_results %>%
+  filter(adj_p_value < 0.05)
 
-library(ggplot2)
+significant_results <- significant_results %>%
+  mutate(log_adj_p_value = -log10(adj_p_value))
 
-# Ensure there are enough colors for all samples
-sample_colors <- setNames(custom_palette[1:length(unique(flux_wide$Sample))], levels(flux_wide$Sample))
+# Create a plot of the significant subsystems only with log-transformed adjusted p-values
+bar_plot <- ggplot(significant_results, aes(x = reorder(Subsystems, adj_p_value), y = adj_p_value)) +
+  geom_bar(stat = "identity", fill = "purple") +  # Bar plot with purple color
+  coord_flip() +  # Flip the coordinates for better readability
+  labs(
+    title = "", 
+    x = "Subsystem", 
+    y = "-Log10(Adjusted P-value)"
+  ) +  # Use log-transformed label
+  theme_minimal() +  # Minimal theme for the plot
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold"),  # Bold x-axis ticks
+    axis.text.y = element_text(face = "bold", size = 10),  # Increased font size and bold y-axis ticks
+    axis.title.x = element_text(face = "bold", size = 12),  # Bold x-axis title
+    axis.title.y = element_text(face = "bold", size = 12),  # Bold y-axis title
+    plot.title = element_text(face = "bold", size = 14, hjust = 0.5)  # Centered bold title
+  )
 
-ggplot(flux_wide, aes(x = Sample, y = EuclideanDistance, fill = Sample)) +
-  geom_col() +
-  scale_fill_manual(values = sample_colors) + # Apply the custom colors
-  theme_minimal() +
-  labs(title = "Euclidean Distance Between Control and Context Conditions",
-       x = "Sample", y = "Euclidean Distance") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
-        legend.position = "none") # Hide the legend if not needed
+# Save the plot with tall dimensions
+ggsave(
+  filename = "Tall_Bar_Plot.png",
+  plot = bar_plot,
+  width = 6,  # Narrower width
+  height = 10,  # Taller height
+  dpi = 300
+)
 
-library(patchwork)
+# Display the plot
+print(bar_plot)
+#########
+# Load necessary libraries
+library(dplyr)
+library(tidyr)
+library(pheatmap)
+library(readxl)
+library(grid)
 
-# Adjust the layout of individual plots if necessary
-# For box-shaped plots at the top, you might consider adjusting their aspect ratio or size to fit your description
-p_pca_design <- p_pca + plot_layout(heights = c(1))
-p_bar_stacked_design <- p_bar_stacked_custom_palette + plot_layout(heights = c(1))
+# Step 0: Load the dataset
+data_path <- "Subsystems_Merged.xlsx"
+data <- read_excel(data_path)
 
-# For the Euclidean Distance plot, ensure it's created as per your description
-p_euclidean_distance <- ggplot(flux_wide, aes(x = Sample, y = EuclideanDistance, fill = Sample)) +
-  geom_col() +
-  scale_fill_manual(values = sample_colors) +
-  theme_minimal() +
-  labs(title = "", x = "Sample", y = "Euclidean Distance") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 14, face = "bold"),
-        axis.title.x = element_text(size = 16, face = "bold"),
-        axis.title.y = element_text(size = 16, face = "bold"),
-        legend.position = "none")
+# Step 1: Reshape the data to long format
+data_long <- data %>%
+  pivot_longer(cols = -Subsystems, names_to = c("Sample_Condition"), values_to = "Activity") %>%
+  separate(Sample_Condition, into = c("Sample", "Condition"), sep = "_")
+
+# Step 2: Reshape the data into wide format
+data_wide <- data_long %>%
+  pivot_wider(names_from = Condition, values_from = Activity) %>%
+  mutate(fold_change = Context / NonContext) %>%
+  select(Subsystems, Sample, NonContext, Context, fold_change)
+
+# Step 3: Handle missing or infinite values
+data_wide_clean <- data_wide %>%
+  filter(!is.na(fold_change) & !is.infinite(fold_change))
+
+# Step 4: Filter subsystems with low variance across samples
+low_variance_threshold <- 0.30  # Threshold for variance filtering
+high_value_subsystems <- data_wide_clean %>%
+  group_by(Subsystems) %>%
+  summarize(variance = var(fold_change, na.rm = TRUE)) %>%
+  filter(variance > low_variance_threshold) %>%
+  pull(Subsystems)
+
+# Step 5: Keep only high-value subsystems
+data_wide_filtered <- data_wide_clean %>%
+  filter(Subsystems %in% high_value_subsystems)
+
+# Step 6: Create a matrix for the heatmap
+data_matrix <- data_wide_filtered %>%
+  select(Sample, Subsystems, fold_change) %>%
+  spread(key = Subsystems, value = fold_change)
+
+# Ensure sample names are correctly set as rownames
+rownames(data_matrix) <- data_matrix$Sample
+data_matrix <- data_matrix %>% select(-Sample)  # Remove Sample column after setting rownames
+
+# Step 7: Define an improved color palette
+improved_palette <- colorRampPalette(c("green", "white", "purple"))(100)
+
+library(grid)
+# Step 8: Generate the heatmap with swapped x and y axes, keeping sample names on the y-axis
+data_matrix_transposed <- t(data_matrix)  # Transpose the matrix
+colnames(data_matrix_transposed) <- rownames(data_matrix)  # Keep sample names as column names
+
+# Step 9: Generate the heatmap with bold axis labels and ticks
+heatmap_plot <- pheatmap(
+  data_matrix_transposed,  # Transposed matrix
+  scale = "row",  # Normalize rows to focus on relative differences
+  clustering_distance_rows = "euclidean",  # Hierarchical clustering for rows (subsystems)
+  clustering_distance_cols = "euclidean",  # Hierarchical clustering for columns (samples)
+  clustering_method = "complete",  # Clustering method
+  color = improved_palette,  # Enhanced color palette
+  fontsize = 10,  # General font size
+  fontsize_row = 22,  # Font size for subsystem labels (now y-axis)
+  fontsize_col = 12,  # Font size for sample labels (now x-axis)
+  legend_breaks = seq(-2, 2, by = 0.5),  # Adjust breaks for color legend
+  legend_labels = seq(-2, 2, by = 0.5),  # Corresponding labels for the color scale
+  legend_title = "Fold Change (Log Scale)",  # Legend title
+  legend_side = "left",  # Move legend to the left side
+  angle_col = 45,  # Rotate subsystem names for better readability
+  # Bold and larger font size for axis labels
+  axis.text.x = grid::gpar(fontsize = 14, fontface = "bold"),  # Bold and larger font for x-axis ticks
+  axis.text.y = grid::gpar(fontsize = 14, fontface = "bold"),  # Bold and larger font for y-axis ticks
+  # Adjust color legend to match the color range and align it properly
+  color_fun = colorRampPalette(c("green", "white", "purple")),  # Ensure colors match the range
+  # Increase resolution and better positioning of color bar labels
+  display_numbers = F  # Optionally, remove numbers inside heatmap cells for clarity
+)
+
+# Print the heatmap plot to verify appearance
+heatmap_plot
+
+# Print the heatmap plot to verify appearance
+heatmap_plot
+
+# Specify the file path where you want to save the figure
+output_path <- "heatmap.png"
+
+# Save the heatmap as a PNG file
+png(output_path, width = 1000, height = 1000)  # Set dimensions as needed
+heatmap_plot  # Plot the heatmap to the PNG file
+dev.off()  # Close the device to save the file
 
 
-# Combine plots with specified layout
-# Use `plot_layout()` to define the number of columns and the relative heights of the plots
-combined_plot <- (p_pca_design | p_bar_stacked_design) / 
-  p_euclidean_distance + 
-  plot_layout(ncol = 1, heights = c(1, 0.5))
+###############
+###############
+# Load necessary libraries
+library(tidyverse)
+library(readxl)
+library(ggpubr)
+
+# Load the data
+data_path <- "Subsystems_Merged.xlsx"
+data <- read_excel(data_path)
+
+# Reshape the data to long format
+data_long <- data %>%
+  pivot_longer(cols = -Subsystems, names_to = c("Sample_Condition"), values_to = "Activity") %>%
+  separate(Sample_Condition, into = c("Sample", "Condition"), sep = "_") %>%
+  mutate(
+    Condition = str_trim(tolower(Condition))  # Standardize condition names
+  )
+
+# 1. Create a summary of activity data for each Lactobacillus group
+summary_stats <- data_long %>%
+  filter(Community %in% c("Lactobacillus Diverse", "Lactobacillus Absent", "Lactobacillus Single")) %>%
+  group_by(Community, Condition) %>%
+  summarise(
+    mean_activity = mean(Activity, na.rm = TRUE),
+    sd_activity = sd(Activity, na.rm = TRUE),
+    min_activity = min(Activity, na.rm = TRUE),
+    max_activity = max(Activity, na.rm = TRUE),
+    n = n(),  # Sample size for each group
+    .groups = 'drop'
+  )
+
+# Print summary statistics for each group and condition
+print("Summary Statistics for Lactobacillus Groups:")
+print(summary_stats)
+
+# 2. Perform ANOVA to test for differences in activity between Lactobacillus groups
+anova_results <- data_long %>%
+  filter(Community %in% c("Lactobacillus Diverse", "Lactobacillus Absent", "Lactobacillus Single")) %>%
+  aov(Activity ~ Community + Condition + Community:Condition, data = .)
+
+# Summary of ANOVA results
+anova_summary <- summary(anova_results)
+print("ANOVA Results for Activity Across Lactobacillus Groups:")
+print(anova_summary)
+
+# 3. Perform pairwise comparisons using Tukey's HSD test (post-hoc test after ANOVA)
+tukey_results <- TukeyHSD(anova_results)
+
+# Print Tukey's HSD post-hoc test results
+print("Tukey's HSD Post-hoc Test Results for Lactobacillus Groups:")
+print(tukey_results)
+
+# Define the communities
+#Diverse communities are more than 3 species
+Lactobacillus_diverse <- c("A01", "B02", "D01", "D02", "G01")
+Lactobacillus_absent <- c("C02", "E01", "E02", "F01", "F02", "H01", "H25362", "H25363", "H25364", "H25365")
+Lactobacillus_single <- c("A02", "B01", "C01", "H25361")
+
+# Assign community type to each sample
+data_long <- data_long %>%
+  mutate(
+    Community = case_when(
+      Sample %in% Lactobacillus_diverse ~ "Lactobacillus Diverse",
+      Sample %in% Lactobacillus_absent ~ "Lactobacillus Absent",
+      Sample %in% Lactobacillus_single ~ "Lactobacillus Single",
+      TRUE ~ "Other"
+    )
+  )
+
+# Split the data into 'Context' and 'NonContext' datasets
+data_context <- data_long %>% filter(Condition == "context")
+data_noncontext <- data_long %>% filter(Condition == "noncontext")
+
+# Custom function to create the dot plots with enhanced statistical test and comparisons
+create_dot_plot <- function(data, condition_label) {
+  ggplot(data, aes(x = Community, y = Activity, fill = Community)) +
+    geom_boxplot(outlier.shape = NA, alpha = 0.5) +
+    geom_jitter(width = 0.15, size = 2.5, aes(color = Community)) +
+    scale_fill_manual(values = c("#4B0082", "#800080", "#D8BFD8")) +  # Deep purple to light purple palette
+    scale_color_manual(values = c("#4B0082", "#800080", "#D8BFD8")) +  # Matching color for jitter points
+    labs(
+      title = paste("Metabolic Activity (", condition_label, ")", sep = ""),
+      x = "Community Type",
+      y = "Activity"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5),  # Centered bold title
+      axis.text.x = element_text(size = 10, face = "bold"),  # Bold and larger x-axis ticks
+      axis.text.y = element_text(size = 12, face = "bold"),  # Bold and larger y-axis ticks
+      axis.title.y = element_text(size = 12, face = "bold"),  # Bold y-axis title
+      axis.title.x = element_text(size = 12, face = "bold"),  # Bold x-axis title
+      legend.position = "none"  # Remove legend for clarity
+    ) +
+    # Perform and display statistical tests (t-tests)
+    stat_compare_means(
+      comparisons = list(
+        c("Lactobacillus Diverse", "Lactobacillus Absent"),
+        c("Lactobacillus Diverse", "Lactobacillus Single"),
+        c("Lactobacillus Absent", "Lactobacillus Single")
+      ),
+      method = "t.test",
+      label = "p.signif",  # Show significance level (e.g., *, **, ***) 
+      size = 4,
+      position = position_dodge(width = 0.5),  # Adjust position of comparison labels to prevent overlap
+      label.x.npc = "center",  # Center comparison labels horizontally
+      label.y = 1.2,  # Adjust vertical position to avoid overlap
+      angle = 45,  # Rotate labels by 45 degrees
+      tip_length = 0.03  # Adjust the tip length of the lines connecting groups
+    )
+}
+
+# Create the plots for context and noncontext
+context_plot <- create_dot_plot(data_context, "Context")
+noncontext_plot <- create_dot_plot(data_noncontext, "NonContext")
+
+# Combine the plots into a single figure (side by side)
+combined_plot <- ggarrange(context_plot, noncontext_plot, ncol = 2, labels = c("A", "B"))
+
+# Save the combined plot with the specified size
+ggsave("Combined_Plot_Context_NonContext.png", 
+       combined_plot, width = 12, height = 6, dpi = 300)
 
 # Display the combined plot
 print(combined_plot)
-
-# Save the Combined Plot with appropriate dimensions
-ggsave("Combined_PCA_Bar_Euclidean_Distance.png", combined_plot, width = 14, height = 10)
