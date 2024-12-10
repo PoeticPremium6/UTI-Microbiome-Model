@@ -1,184 +1,391 @@
-library(ggplot2)
-library(dplyr)
-library(readr)
-library(tidyr)
-library(scales) 
+# Load necessary libraries
+library(dplyr)  # For data manipulation
+library(tidyr)  # For data reshaping
+library(ggplot2) # For plotting
+library(tibble) # For tidy data manipulation
 
-# Read the data
-data <- read.csv("Class_Clustering.csv")
+# Define the input file path
+input_file <- "Combined_Reaction_Flux_Summary.csv"
 
-# Keep only SuperClass and sample columns
-data_sum <- data %>%
-  select(-Class, -SubClass, -Metabolite) %>%
-  pivot_longer(cols = starts_with("A") | starts_with("B") | starts_with("C") | starts_with("D") | starts_with("E") | starts_with("F") | starts_with("G") | starts_with("H"),
-               names_to = "Sample",
-               values_to = "Abundance") %>%
-  mutate(Sample = str_replace(Sample, "Control", "Non-Context")) %>%
-  group_by(SuperClass, Sample) %>%
-  summarise(Abundance = sum(Abundance, na.rm = TRUE), .groups = 'drop')
+# Step 1: Read the CSV file into a dataframe
+data <- read.csv(input_file, stringsAsFactors = FALSE)
 
-# Adjust the sample_order for renamed samples
-sample_order <- c('A1_Non-Context', 'A1_Context', 'A2_Non-Context', 'A2_Context', 'B1_Non-Context', 'B1_Context', 'B2_Non-Context', 'B2_Context', 'C1_Non-Context', 'C1_Context', 'C2_Non-Context', 'C2_Context', 'D1_Non-Context', 'D1_Context', 'D2_Non-Context', 'D2_Context', 'E1_Non-Context', 'E1_Context', 'E2_Non-Context', 'E2_Context', 'F1_Non-Context', 'F1_Context', 'F2_Non-Context', 'F2_Context', 'G1_Non-Context', 'G1_Context', 'H1_Non-Context', 'H1_Context', 'H25361_Non-Context', 'H25361_Context', 'H25362_Non-Context', 'H25362_Context', 'H25363_Non-Context', 'H25363_Context', 'H25364_Non-Context', 'H25364_Context', 'H25365_Non-Context', 'H25365_Context')
-data_sum$Sample <- factor(data_sum$Sample, levels = sample_order)
-# Z-score scaling for abundance
-data_sum$ZScoreAbundance <- scale(data_sum$Abundance)
+# Define human-readable names mapping (example provided by user)
+reaction_name_map <- tibble(
+  Reaction = c(
+    "HXANtex", "HYXNtpp", "7OCHOLATEtex", "7ocholate[u]tr",
+    "TDG3PACT", "CADVtpp", 
+    "5DGLCNR", "IDON_Ltex", 
+    "IDONt2rpp", "idon_L[u]tr", 
+    "FDNADOX_Hpp", "CHOLATEtex", 
+    "cholate[u]tr", "G3PAT140", 
+    "GLCP", "GLCS1", 
+    "15DAPtpp", "KARA1",
+    "GLCNtex", "glcn[u]tr"
+  ),
+  HumanReadableName = c(
+    "Hypoxanthine Exchange", "Hypoxanthine Transport", "Cholanate Exchange", "Cholanate Transport",
+    "Myristoyl O-acyltransferase", "Lysine/Cadaverine antiporter", 
+    "5-dehydro-D-gluconate reductase", "L-Idonate exchange", 
+    "L-idonate transport via proton symport", "L-Idonate Transport",
+    "Ferredoxin", "Cholate Transport via Bicarbonate Antiport",
+    "Cholate Transport", "Glycerol-3-phosphate acyltransferase",
+    "Glycogen phosphorylase", "Glycogen synthase",
+    "1,5-Diaminopentane (cadaverine) export", "Ketol-acid reductoisomerase",
+    "D-gluconate transport via proton symport","D-gluconate Transport"
+  )
+)
 
-# Excluding non-numeric columns from the pivot
-metabolite_ttest_results <- data %>%
-  select(Metabolite, everything(), -SuperClass, -Class, -SubClass) %>%
-  pivot_longer(cols = -Metabolite,
-               names_to = "Sample",
-               values_to = "Abundance") %>%
+#######################################
+# Positive Flux Analysis (Production)
+# Step 2: Filter for positive values
+positive_data <- data %>%
+  mutate(across(where(is.numeric), ~ ifelse(. > 0, ., NA)))  # Retain positive values, replace others with NA
+
+# Step 3: Reshape and summarize positive flux data
+long_positive_data <- positive_data %>%
+  pivot_longer(-Reaction, names_to = "Sample", values_to = "Value") %>%
+  filter(!is.na(Value))  # Retain only rows with positive values
+
+# Perform a one-sample t-test for each reaction (positive flux)
+stat_results_positive <- long_positive_data %>%
+  group_by(Reaction) %>%
+  summarise(
+    mean_flux = mean(Value, na.rm = TRUE),  # Mean positive flux
+    sd_flux = sd(Value, na.rm = TRUE),     # Standard deviation
+    n = n(),                               # Sample size
+    p_value = ifelse(
+      n > 1 & sd_flux > 0,                 # Only perform t-test if more than 1 value and variability exists
+      t.test(Value, mu = 0)$p.value,       # One-sample t-test (against null hypothesis of zero flux)
+      NA                                  # Assign NA if test cannot be performed
+    ),
+    .groups = "drop"
+  )
+
+# Filter reactions based on p-value and positive mean flux thresholds
+significant_positive_reactions <- stat_results_positive %>%
+  filter(p_value < 0.05 & mean_flux > 750)  # Adjust threshold as needed (positive mean flux and p-value < 0.05)
+
+# Select the top 10 positive reactions, first by mean flux, then by p-value (highest confidence)
+top_positive_reactions <- significant_positive_reactions %>%
+  arrange(desc(mean_flux), p_value) %>%
+  slice_head(n = 10)
+
+# Step 4: Prepare the positive matrix for plotting (with HumanReadableName)
+positive_matrix <- positive_data %>%
+  pivot_longer(-Reaction, names_to = "Sample", values_to = "Value") %>%  # Reshape to long format
+  filter(Reaction %in% top_positive_reactions$Reaction)  # Retain top positive reactions
+
+# Join with the human-readable names for positive reactions
+positive_matrix <- positive_matrix %>%
+  left_join(reaction_name_map, by = "Reaction")
+
+positive_matrix$flux_type <- "Production"  # Label as Production
+
+#######################################
+# Negative Flux Analysis (Consumption)
+# Step 2: Filter for negative values
+negative_data <- data %>%
+  mutate(across(where(is.numeric), ~ ifelse(. < 0, ., NA)))  # Retain negative values, replace others with NA
+
+# Step 3: Reshape and summarize negative flux data
+long_negative_data <- negative_data %>%
+  pivot_longer(-Reaction, names_to = "Sample", values_to = "Value") %>%
+  filter(!is.na(Value))  # Retain only rows with negative values
+
+# Perform a one-sample t-test for each reaction (negative flux)
+stat_results_negative <- long_negative_data %>%
+  group_by(Reaction) %>%
+  summarise(
+    mean_flux = mean(Value, na.rm = TRUE),  # Mean negative flux
+    sd_flux = sd(Value, na.rm = TRUE),     # Standard deviation
+    n = n(),                               # Sample size
+    p_value = ifelse(
+      n > 1 & sd_flux > 0,                 # Only perform t-test if more than 1 value and variability exists
+      t.test(Value, mu = 0)$p.value,       # One-sample t-test (against null hypothesis of zero flux)
+      NA                                  # Assign NA if test cannot be performed
+    ),
+    .groups = "drop"
+  )
+
+# Filter reactions based on p-value and negative mean flux thresholds
+significant_negative_reactions <- stat_results_negative %>%
+  filter(p_value < 0.05 & mean_flux < -750)  # Adjust threshold as needed (negative mean flux and p-value < 0.05)
+
+# Select the top 10 negative reactions, first by mean flux, then by p-value (highest confidence)
+top_negative_reactions <- significant_negative_reactions %>%
+  arrange(mean_flux, p_value) %>%
+  slice_head(n = 10)
+
+# Step 4: Prepare the negative matrix for plotting (with HumanReadableName)
+negative_matrix <- negative_data %>%
+  pivot_longer(-Reaction, names_to = "Sample", values_to = "Value") %>%  # Reshape to long format
+  filter(Reaction %in% top_negative_reactions$Reaction)  # Retain top negative reactions
+
+# Join with the human-readable names for negative reactions
+negative_matrix <- negative_matrix %>%
+  left_join(reaction_name_map, by = "Reaction")
+
+negative_matrix$flux_type <- "Consumption"  # Label as Consumption
+
+#######################################
+# Combine Positive and Negative Data for Plotting
+combined_data <- bind_rows(
+  positive_matrix,
+  negative_matrix
+)
+
+# Step 5: Plot the top 10 positive and top 10 negative fluxes
+# Plot with improved font size and contrasting purple color palette
+ggplot(combined_data, aes(x = reorder(HumanReadableName, Value), y = Value, fill = flux_type)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip() +  # Flip the coordinates for better readability
+  labs(
+    title = "",
+    x = "Reactions",
+    y = "Mean Flux Value",
+    fill = "Flux Type"
+  ) +
+  scale_fill_manual(values = c("Production" = "#4B0082", "Consumption" = "#D3B8E6")) +  # Dark purple and pale purple
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", size = 14),  # Increase font size for x axis
+    axis.text.y = element_text(face = "bold", size = 14),  # Increase font size for y axis
+    axis.title.x = element_text(face = "bold", size = 16),  # Increase font size for x axis title
+    axis.title.y = element_text(face = "bold", size = 16),  # Increase font size for y axis title
+    legend.text = element_text(face = "bold", size = 14),  # Increase font size for legend text
+    legend.title = element_text(face = "bold", size = 16)  # Increase font size for legend title
+  )
+
+
+# Define the output file path
+# Define the output file path
+output_file <- "Reaction_Flux_Plot.png"
+
+# Save the plot with updated color palette and larger font size
+ggsave(output_file, 
+       plot = ggplot(combined_data, aes(x = reorder(HumanReadableName, Value), y = Value, fill = flux_type)) +
+         geom_bar(stat = "identity", position = "dodge") +
+         coord_flip() +  # Flip the coordinates for better readability
+         labs(
+           title = "",
+           x = "Reactions",
+           y = "Mean Flux Value",
+           fill = "Flux Type"
+         ) +
+         scale_fill_manual(values = c("Production" = "#4B0082", "Consumption" = "#D3B8E6")) +  # Dark purple and pale purple
+         theme_minimal() +
+         theme(
+           axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", size = 14),  # Increase font size for x axis
+           axis.text.y = element_text(face = "bold", size = 14),  # Increase font size for y axis
+           axis.title.x = element_text(face = "bold", size = 16),  # Increase font size for x axis title
+           axis.title.y = element_text(face = "bold", size = 16),  # Increase font size for y axis title
+           legend.text = element_text(face = "bold", size = 14),  # Increase font size for legend text
+           legend.title = element_text(face = "bold", size = 16)  # Increase font size for legend title
+         ),
+       width = 10, height = 7)  # Adjust size if necessary
+
+
+# Print the top 10 positive reactions
+cat("\nTop 10 Positive (Production) Reactions:\n")
+print(top_positive_reactions)
+
+# Print the top 10 negative reactions
+cat("\nTop 10 Negative (Consumption) Reactions:\n")
+print(top_negative_reactions)
+
+# Print a message to confirm plot completion
+cat("\nPlot generated for top 10 positive (Production) and top 10 negative (Consumption) flux reactions.\n")
+
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+
+# Load necessary libraries
+library(dplyr)  # For data manipulation
+library(tidyr)  # For data reshaping
+library(ggplot2) # For plotting
+library(tibble) # For tidy data manipulation
+
+# Define the input file path
+input_file <- "Combined_Metabolite_Uptake_Production_Summary.csv"
+
+# Step 1: Read the CSV file into a dataframe
+data <- read.csv(input_file, stringsAsFactors = FALSE)
+
+# Create a mapping for the top metabolites to human-readable names
+metabolite_name_map <- tibble(
+  Metabolite = c(
+    "hxan[p]", "h[c]", "7ocholate[u]", "idon_L[p]", "idon_L[u]", "3hbcoa_R[c]", 
+    "dms[u]", "isobut[p]", "isobut[u]", "nadh[c]", 
+    "co2[fe]", "nh4[fe]", "h[fe]", "etoh[fe]", "lac_L[fe]", "dad_2[fe]", 
+    "glcur[fe]", "ala_D[fe]", "gsn[fe]"
+  ),
+  HumanReadableName = c(
+    "Hypoxanthine (periplasm)", "Hydrogen ion (cytoplasm)", "7-Oxocholate (uptake)", 
+    "L-Idonate (periplasm)", "L-Idonate (uptake)", "3-Hydroxybutyryl-CoA (cytoplasm)",
+    "Dimethyl sulfide (uptake)", "Isobutyrate (periplasm)", "Isobutyrate (uptake)", 
+    "NADH (cytoplasm)", "Carbon dioxide (fermentation)", "Ammonium (fermentation)", 
+    "Hydrogen ion (fermentation)", "Ethanol (fermentation)", "L-Lactate (fermentation)", 
+    "Deoxyadenosine diphosphate (fermentation)", "Glucuronate (fermentation)", 
+    "D-Alanine (fermentation)", "Guanosine (fermentation)"
+  )
+)
+
+#######################################
+# Positive Flux Analysis (Production)
+# Step 2: Filter for positive values
+positive_data <- data %>%
+  mutate(across(where(is.numeric), ~ ifelse(. > 0, ., NA)))
+
+# Step 3: Reshape and summarize positive flux data
+long_positive_data <- positive_data %>%
+  pivot_longer(-Metabolite, names_to = "Sample", values_to = "Value") %>%
+  filter(!is.na(Value))
+
+stat_results_positive <- long_positive_data %>%
   group_by(Metabolite) %>%
-  do(tidy = broom::tidy(t.test(.data$Abundance[grepl("_Control$", .data$Sample)],
-                               .data$Abundance[grepl("_Context$", .data$Sample)],
-                               paired = TRUE))) %>%
-  unnest(cols = tidy) %>%
-  select(Metabolite, p.value)
+  summarise(
+    mean_flux = mean(Value, na.rm = TRUE),
+    sd_flux = sd(Value, na.rm = TRUE),
+    n = n(),
+    p_value = ifelse(
+      n > 1 & sd_flux > 0,
+      t.test(Value, mu = 0)$p.value,
+      NA
+    ),
+    .groups = "drop"
+  )
 
-# Sorting by the absolute difference of p-values from 0.5 will allow the smallest and largest p-values to be at the top.
-# This helps to find the most distinct or similar metabolites.
-metabolite_ttest_results <- metabolite_ttest_results %>%
-  arrange(abs(p.value - 0.5))
+significant_positive_reactions <- stat_results_positive %>%
+  filter(p_value < 0.05 & mean_flux > 750)
 
-# Display the top 10 metabolites with strongest differences or similarities
-head(metabolite_ttest_results, 20)
+top_positive_reactions <- significant_positive_reactions %>%
+  arrange(desc(mean_flux), p_value) %>%
+  slice_head(n = 10)
 
-# Adjust p-values for FDR
-metabolite_ttest_results$adjusted_p.value <- p.adjust(metabolite_ttest_results$p.value, method = "BH")
+positive_matrix <- positive_data %>%
+  pivot_longer(-Metabolite, names_to = "Sample", values_to = "Value") %>%
+  filter(Metabolite %in% top_positive_reactions$Metabolite) %>%
+  left_join(metabolite_name_map, by = "Metabolite")
 
-# Display the top metabolites with strongest differences or similarities after FDR correction
-head(metabolite_ttest_results, 10)
+positive_matrix$flux_type <- "Production"
 
-sorted_data <- metabolite_ttest_results %>%
-  arrange(adjusted_p.value)
+#######################################
+# Negative Flux Analysis (Consumption)
+negative_data <- data %>%
+  mutate(across(where(is.numeric), ~ ifelse(. < 0, ., NA)))
 
-# Plotting
-library(ggplot2)
-library(dplyr)
+long_negative_data <- negative_data %>%
+  pivot_longer(-Metabolite, names_to = "Sample", values_to = "Value") %>%
+  filter(!is.na(Value))
 
-# Assuming sorted_data is already prepared
-threshold <- -log10(0.1)  # Define a threshold for significance
+stat_results_negative <- long_negative_data %>%
+  group_by(Metabolite) %>%
+  summarise(
+    mean_flux = mean(Value, na.rm = TRUE),
+    sd_flux = sd(Value, na.rm = TRUE),
+    n = n(),
+    p_value = ifelse(
+      n > 1 & sd_flux > 0,
+      t.test(Value, mu = 0)$p.value,
+      NA
+    ),
+    .groups = "drop"
+  )
 
-# Filtering for significant metabolites (Supp5C)
-significant_data <- sorted_data %>%
-  filter(-log10(adjusted_p.value) >= threshold)
+significant_negative_reactions <- stat_results_negative %>%
+  filter(p_value < 0.05 & mean_flux < -750)
 
-# Further narrowing less significant metabolites for Supp5D
-# Adjust this threshold according to your preference for how much to filter out
-less_significant_data_narrowed <- sorted_data %>%
-  filter(-log10(adjusted_p.value) < threshold, -log10(adjusted_p.value) > threshold - 2)
+top_negative_reactions <- significant_negative_reactions %>%
+  arrange(mean_flux, p_value) %>%
+  slice_head(n = 10)
 
-# Function to create and save plots with enhanced labeling
-create_plot <- function(data, filename) {
-  p <- ggplot(data, aes(x = reorder(Metabolite, -adjusted_p.value), y = -log10(adjusted_p.value))) +
-    geom_bar(stat = 'identity', aes(fill = -log10(adjusted_p.value))) +
-    geom_hline(yintercept = threshold, color = "red", linetype = "dashed") +
-    labs(y = "-log10(Adjusted P-Value)", x = "Metabolite") +
-    scale_fill_gradientn(colors = c("blue", "yellow", "red"), name = "-log10(Adjusted P-Value)") +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, face = "bold", size = 7),
-          axis.text.y = element_text(face = "bold", size = 14),
-          axis.title.x = element_text(size = 14, face = "bold"),
-          axis.title.y = element_text(size = 14, face = "bold"),
-          legend.position = "bottom")
-  
-  # Adjusted dimensions for a more box-shaped plot
-  ggsave(filename, p, width = 8, height = 6, units = "in", dpi = 300)
+negative_matrix <- negative_data %>%
+  pivot_longer(-Metabolite, names_to = "Sample", values_to = "Value") %>%
+  filter(Metabolite %in% top_negative_reactions$Metabolite) %>%
+  left_join(metabolite_name_map, by = "Metabolite")
+
+negative_matrix$flux_type <- "Consumption"
+
+#######################################
+# Combine and Plot
+# Join top reactions with human-readable names
+top_positive_reactions <- top_positive_reactions %>%
+  left_join(metabolite_name_map, by = "Metabolite")
+
+top_negative_reactions <- top_negative_reactions %>%
+  left_join(metabolite_name_map, by = "Metabolite")
+
+# Check for unmatched metabolites
+unmatched_positives <- setdiff(top_positive_reactions$Metabolite, metabolite_name_map$Metabolite)
+unmatched_negatives <- setdiff(top_negative_reactions$Metabolite, metabolite_name_map$Metabolite)
+
+if (length(unmatched_positives) > 0 || length(unmatched_negatives) > 0) {
+  cat("\nWarning: The following metabolites were not found in the mapping table:\n")
+  cat("Unmatched positives: ", unmatched_positives, "\n")
+  cat("Unmatched negatives: ", unmatched_negatives, "\n")
 }
 
-#Font size 14
-# Create and save the plot for significant metabolites (Supp5C)
-create_plot(significant_data, "Plot1.png")
+# Prepare combined data for plotting
+positive_matrix <- positive_matrix %>%
+  left_join(metabolite_name_map, by = "Metabolite")
 
-# Correcting the extraction of metabolites
+negative_matrix <- negative_matrix %>%
+  left_join(metabolite_name_map, by = "Metabolite")
 
-# Filter significant metabolites
-significant_metabolites <- metabolite_ttest_results %>% 
-  filter(adjusted_p.value < 0.05) %>% 
-  arrange(adjusted_p.value)
+combined_data <- bind_rows(
+  positive_matrix %>% filter(!is.na(HumanReadableName)),
+  negative_matrix %>% filter(!is.na(HumanReadableName))
+)
 
-# Identify metabolites with strongest differences
-strongest_differences <- head(significant_metabolites, 5)
-
-# Identify metabolites with least differences (i.e., most similarity)
-most_similar <- tail(significant_metabolites, 5)
-
-# Print results for verification
-print(strongest_differences)
-print(most_similar)
-
-
-# Plotting a heatmap
-p <- ggplot(data_sum, aes(x = Sample, y = SuperClass)) +
-  geom_tile(aes(fill = ZScoreAbundance), color = "white") +
-  scale_fill_gradientn(colors = c("blue", "yellow", "red")) +
-  labs(y = "SuperClass", fill = "Z-Score Scaled\nAbundance") +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, face = "bold", size = 12, margin = margin(b = 10)), # Rotate x-axis labels to 90 degrees, increase font size, make bold, and add bottom margin
-    axis.text.y = element_text(face = "bold", size = 12),  # Increase font size and make y-axis labels bold
-    axis.title.y = element_text(face = "bold", size = 14),  # Make y-axis title bold and increase font size
-    axis.title.x = element_blank(),  # Remove x-axis title for cleaner look
-    axis.ticks.x = element_blank(),  # Remove x-axis ticks for a cleaner look
-    plot.margin = unit(c(1, 1, 1, 1), "cm")  # Adjust plot margins to ensure labels fit
-  )
-
-# Display the plot
-print(p)
-ggsave("Plot3.png", plot = p, width = 12, height = 6, units = "in")
-
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-library(stringr)
-library(readr)
-
-# Load the data
-data <- read.csv("Biomass.csv")
-
-# Provided sample names
-sample_names <- c("A1", "A2", "B1", "B2", "C1", "C2", "D1", "D2",
-                  "E1", "E2", "F1", "F2", "G1", "H1", "H25361",
-                  "H25362", "H25363", "H25364", "H25365")
-
-# Let's assume samples starting with "H" or containing "2536" are considered "E.coli", others are "L.iners"
-
-# Convert to longer format and extract community and condition
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-
-data_long <- data %>%
-  pivot_longer(cols = -Metabolites, names_to = "Sample", values_to = "Flux") %>%
-  mutate(
-    Community = ifelse(grepl("^H|2536", Sample), "E.coli", "L.iners"),
-    Condition = ifelse(str_detect(Sample, "Control"), "Non-Context", "Context") # Rename "Control" to "Non-Context"
-  )
-
-# Plot with updated Condition names
-p <- ggplot(data_long, aes(x = interaction(Community, Condition, sep = "\n"), y = Flux, fill = Condition)) +
-  geom_boxplot(outlier.shape = NA, position = position_dodge(width = 0.8), alpha = 0.5) + 
-  geom_jitter(width = 0.15, alpha = 0.7, size = 2.5, aes(color = Condition)) + 
-  scale_color_manual(values = c("Non-Context" = "#FC4E2A", "Context" = "#E6AB02")) + 
-  scale_fill_manual(values = c("Non-Context" = "#FC4E2A", "Context" = "#E6AB02")) + 
-  labs(y = "Global Flux", x = "", title = "Comparison of Global Flux between Communities and Conditions") + 
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    legend.title = element_blank(),
-    legend.position = "top",
-    legend.text = element_text(size = 14),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 14, face = "bold"),
-    axis.title.y = element_text(size = 16, face = "bold"),
-    axis.text.y = element_text(size = 14)
+# Plot the data with enhanced readability and purple color palette
+ggplot(combined_data, aes(x = reorder(HumanReadableName, Value), y = Value, fill = flux_type)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip() +
+  labs(
+    title = "",
+    x = "Metabolites",
+    y = "Mean Flux Value",
+    fill = "Flux Type"
   ) +
-  geom_signif(comparisons = list(c("E.coli\nNon-Context", "L.iners\nNon-Context"), c("E.coli\nContext", "L.iners\nContext")),
-              map_signif_level = TRUE, textsize = 4, vjust = -0.5,
-              # Specify annotations manually
-              annotations = c("**", "ns"))  # Adjust annotations as per your data or remove if not applicable
+  scale_fill_manual(values = c("Production" = "#4B0082", "Consumption" = "#D3B8E6")) +  # Dark purple and pale purple
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", size = 14),  # Increase font size for x axis
+    axis.text.y = element_text(face = "bold", size = 14),  # Increase font size for y axis
+    axis.title.x = element_text(face = "bold", size = 16),  # Increase font size for x axis title
+    axis.title.y = element_text(face = "bold", size = 16),  # Increase font size for y axis title
+    legend.text = element_text(face = "bold", size = 14),  # Increase font size for legend text
+    legend.title = element_text(face = "bold", size = 16)  # Increase font size for legend title
+  )
 
-# Print the plot
-print(p)
-# Assuming 'p' is your ggplot object
-ggsave(filename = "Comparative_Flux.png", plot = p, width = 10, height = 8, dpi = 300)
+# Define the output file path for the Metabolite_Flux plot
+output_file_metabolite_flux <- "Metabolite_Flux_Plot.png"
+
+# Save the Metabolite_Flux plot with updated features
+ggsave(output_file_metabolite_flux, 
+       plot = ggplot(combined_data, aes(x = reorder(HumanReadableName, Value), y = Value, fill = flux_type)) +
+         geom_bar(stat = "identity", position = "dodge") +
+         coord_flip() +
+         labs(
+           title = "",
+           x = "Metabolites",
+           y = "Mean Flux Value",
+           fill = "Flux Type"
+         ) +
+         scale_fill_manual(values = c("Production" = "#4B0082", "Consumption" = "#D3B8E6")) +  # Dark purple and pale purple
+         theme_minimal() +
+         theme(
+           axis.text.x = element_text(angle = 45, hjust = 1, face = "bold", size = 14),  # Increase font size for x axis
+           axis.text.y = element_text(face = "bold", size = 14),  # Increase font size for y axis
+           axis.title.x = element_text(face = "bold", size = 16),  # Increase font size for x axis title
+           axis.title.y = element_text(face = "bold", size = 16),  # Increase font size for y axis title
+           legend.text = element_text(face = "bold", size = 14),  # Increase font size for legend text
+           legend.title = element_text(face = "bold", size = 16)  # Increase font size for legend title
+         ),
+       width = 10, height = 7)  # Set desired dimensions for the saved plot
+
