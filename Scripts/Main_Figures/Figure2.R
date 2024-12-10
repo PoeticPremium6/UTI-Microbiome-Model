@@ -13,8 +13,8 @@ generate_custom_palette <- function(n) {
   hcl(h = hues, l = 40, c = 100)[1:n]
 }
 
-path_to_OTU <- "/rRNA_Counts_Clean.tsv"
-path_to_TAX <- "/rRNA_Tax_Clean.tsv"
+path_to_OTU <- "rRNA_Counts_Clean.tsv"
+path_to_TAX <- "rRNA_Tax_Clean.tsv"
 
 # Import the OTU data
 OTU <- read.delim(path_to_OTU, header = TRUE, sep = "\t", check.names = FALSE)
@@ -55,13 +55,44 @@ SAMPLES <- sample_data(SAMPLES)
 # Create phyloseq object
 physeq <- phyloseq(OTU, TAX, SAMPLES)
 
+# Print Summary of the Phyloseq Object
+print(physeq)
+
+# Normalize the OTU table (relative abundance)
+physeq_normalized <- transform_sample_counts(physeq, function(x) x / sum(x))
+
+# Convert the normalized phyloseq object to a data frame
+otu_normalized <- as.data.frame(otu_table(physeq_normalized))
+
+# Apply a minimum threshold to define presence (e.g., 0.01), without setting values to 0
+threshold <- 0.01
+
+# Get strain names from the tax_table
+strain_names <- as.character(tax_table(physeq)[, "Species"])
+
+# Combine strain names with the normalized OTU table
+otu_normalized_with_species <- cbind(Strain = strain_names, otu_normalized)
+
+# Remove duplicate rows based on the 'Strain' column
+otu_normalized_unique <- otu_normalized_with_species %>%
+  distinct(Strain, .keep_all = TRUE)
+
+# Adjust the filtering condition to be more inclusive
+# Include species with at least one non-zero value above a smaller threshold (e.g., 0.0001)
+inclusive_threshold <- 0.001
+otu_normalized_filtered <- otu_normalized_unique %>%
+  filter(rowSums(select(., -Strain) > inclusive_threshold) > 0)
+
+# Save the normalized coverage to a CSV file
+write.csv(otu_normalized_filtered, "normCoverage.csv", row.names = FALSE)
+
 # Calculate relative abundance
 rel_abundance <- transform_sample_counts(physeq, function(x) x / sum(x))
 
 # Convert to long format for plotting
 rel_abundance_long <- psmelt(rel_abundance)
 
-# Extract top genera
+# Extract top 20 genera
 top_genera <- rel_abundance_long %>%
   group_by(Genus) %>%
   summarize(total_abundance = sum(Abundance)) %>%
@@ -80,7 +111,7 @@ color_palette_genera <- generate_custom_palette(20)
 p_genera <- ggplot(filtered_rel_abundance, aes(x = Sample, y = Abundance, fill = Genus)) +
   geom_bar(stat = "identity") +
   geom_bar(stat = "identity", color = "black", width = 1, alpha = 0) +  # Add black lines
-  labs(x = "Sample", y = "Relative Abundance (%)") +
+  labs(x = "Sample", y = "Relative Abundance (%) - Top 20") +
   scale_fill_manual(values = color_palette_genera) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "bold"),  # Rotate x-axis labels
@@ -95,14 +126,14 @@ p_genera <- ggplot(filtered_rel_abundance, aes(x = Sample, y = Abundance, fill =
         panel.grid.minor.y = element_blank()) +  # Remove minor grid lines
   guides(fill = guide_legend(title = "Genus", title.position = "top", title.theme = element_text(face = "bold")))  # Bold legend title
 
-# Save the plot for top  genera
+# Save the plot for top 20 genera
 output_file_path_genera <- "Figure2_genera.png"
 ggsave(filename = output_file_path_genera, plot = p_genera, width = 10, height = 6)
 
 # Display the plot
 print(p_genera)
 
-# Extract top  species
+# Extract top 20 species
 top_species <- rel_abundance_long %>%
   group_by(Species) %>%
   summarize(total_abundance = sum(Abundance)) %>%
@@ -110,14 +141,20 @@ top_species <- rel_abundance_long %>%
   top_n(20) %>%
   pull(Species)
 
-# Filter data for top  species
+# Filter data for top 20 species
 filtered_rel_abundance_species <- rel_abundance_long %>%
   filter(Species %in% top_species)
+color_palette_genera <- c(
+  "#4B0082", "#6A5ACD", "#483D8B", "#7B68EE", "#9370DB", 
+  "#8A2BE2", "#9400D3", "#9932CC", "#BA55D3", "#DDA0DD", 
+  "#EE82EE", "#8B008B", "#6B8E23", "#5F9EA0", "#4682B4",
+  "#6495ED", "#00CED1", "#40E0D0", "#00BFFF", "#1E90FF"
+)
 
 # Generate a custom color palette using a diverse set of colors
-color_palette_species <- generate_custom_palette(20)
+color_palette_species <- color_palette_genera
 
-# Plotting relative abundance for top  species with black lines between each
+# Plotting relative abundance for top 20 species with black lines between each
 p_species <- ggplot(filtered_rel_abundance_species, aes(x = Sample, y = Abundance, fill = Species)) +
   geom_bar(stat = "identity") +
   geom_bar(stat = "identity", color = "black", width = 1, alpha = 0) +  # Add black lines around bars for clarity
@@ -141,7 +178,7 @@ p_species <- ggplot(filtered_rel_abundance_species, aes(x = Sample, y = Abundanc
 p_species  # Display the plot
 
 # Save the plot for top 20 species
-output_file_path_species <- "/Figure2_species.png"
+output_file_path_species <- "Figure2_species.png"
 ggsave(filename = output_file_path_species, plot = p_species, width = 10, height = 6)
 
 # Display the plot
@@ -150,6 +187,8 @@ print(p_species)
 #PCA of Species Composition
 library(vegan)
 library(ggplot2)
+library(ggrepel)
+
 
 # Transform the OTU counts to relative abundances for PCA
 physeq_relabund <- transform_sample_counts(physeq, function(x) x / sum(x))
@@ -190,14 +229,14 @@ pca_samples_plot <- ggplot(scores, aes(x = PC1, y = PC2, label = Sample)) +
 print(pca_samples_plot)
 
 # Optionally, save the plot to a file
-ggsave("/PCA_Samples_Composition_Improved.png", pca_samples_plot, width = 10, height = 8, dpi = 300)
+ggsave("PCA_Samples_Composition_Improved.png", pca_samples_plot, width = 10, height = 8, dpi = 300)
 
 library(ggplot2)
 library(dplyr)
 
 # Reverse the alphabetical order of species in the normalized abundance data
-otu_path <- "/rRNA_Counts_Clean.tsv"
-tax_path <- "/rRNA_Tax_Clean.tsv"
+otu_path <- "rRNA_Counts_Clean.tsv"
+tax_path <- "rRNA_Tax_Clean.tsv"
 
 # Load and Preprocess Data
 otu <- read.delim(otu_path, row.names = 1, check.names = FALSE, sep = "\t")
@@ -238,7 +277,7 @@ rownames(otu_normalized) <- species_names
 otu_normalized_df <- as.data.frame(otu_normalized)
 
 # Save the normalized abundance table
-output_csv_path <- "/Species_Abundance_Per_Sample_Normalized.csv"
+output_csv_path <- "Species_Abundance_BacArena.csv"
 write.csv(otu_normalized_df, file = output_csv_path, row.names = TRUE)
 
 # Display the first few rows to confirm
@@ -285,7 +324,7 @@ p_dotplot <- ggplot(long_otu_normalized, aes(x = Sample, y = Species)) +
 print(p_dotplot)
 
 # Save the plot to the specified path
-output_file_path_dotplot <- "/Figure2_species_dotplot_New.png"
+output_file_path_dotplot <- "Figure2_species_dotplot_New.png"
 ggsave(filename = output_file_path_dotplot, plot = p_dotplot, width = 10, height = 8)
 
 # Load necessary libraries
@@ -297,20 +336,31 @@ shannon_div_df <- estimate_richness(physeq, measures = "Shannon")
 shannon_div_df$Sample <- rownames(shannon_div_df)
 
 # Plot Shannon Diversity
+# Improved Plot for Shannon Diversity with Bold and Larger Axis Ticks
 plot <- ggplot(shannon_div_df, aes(x = Sample, y = Shannon)) +
-  geom_bar(stat = "identity", fill = "purple") +
-  labs(x = "Sample Names", y = "Alpha Diversity Measure (Shannon Index)") +
-  theme_minimal() +
+  geom_bar(stat = "identity", fill = "purple", color = "black", width = 0.7) +  # Add border and adjust width
+  labs(
+    #title = "Shannon Diversity Across Samples",  # Add title
+    x = "Sample Names",
+    y = "Alpha Diversity Measure (Shannon Index)"
+  ) +
+  theme_minimal(base_size = 14) +  # Increase base font size
   theme(
-    axis.title.x = element_text(face = "bold"),  # Bold x-axis title
-    axis.title.y = element_text(face = "bold"),  # Bold y-axis title
-    axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1, face = "bold"),  # Rotate x-axis ticks
-    axis.text.y = element_text(face = "bold")  # Bold y-axis ticks
+    plot.title = element_text(face = "bold", size = 16, hjust = 0.5),  # Center and bold title
+    axis.title.x = element_text(face = "bold", size = 14),  # Adjust size for x-axis title
+    axis.title.y = element_text(face = "bold", size = 14),  # Adjust size for y-axis title
+    axis.text.x = element_text(
+      angle = 90, vjust = 0.5, hjust = 1, face = "bold", size = 12  # Bold and larger x-axis text
+    ),
+    axis.text.y = element_text(face = "bold", size = 16),  # Bold and larger y-axis text
+    panel.grid.major.x = element_blank(),  # Remove vertical gridlines
+    panel.grid.major.y = element_line(color = "gray", linetype = "dashed")  # Dashed horizontal gridlines
   )
+
 
 # Display the plot
 print(plot)
 
 # Save the plot
-output_file_path_shannon <- "/shannon_diversity_plot.png"
+output_file_path_shannon <- "shannon_diversity_plot.png"
 ggsave(filename = output_file_path_shannon, plot = plot, width = 10, height = 6)
