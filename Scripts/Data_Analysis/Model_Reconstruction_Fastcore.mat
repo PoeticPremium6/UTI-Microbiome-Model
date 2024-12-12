@@ -1,0 +1,124 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Reconstructing context-specific metabolic models from gapseq
+
+% List of samples
+samples = {'A01', 'A02', 'B01', 'B02', 'C01', 'C02', 'D01', 'D02', 'E01', 'E02', 'F01', 'F02', 'G01', 'H01', 'H25361', 'H25362', 'H25363', 'H25364', 'H25365'};
+
+% Path to the metabolic model MAT file
+modelFilePath = 'UTI89.mat';
+
+% Step 1: Load the metabolic model from the MAT file
+loadedData = load(modelFilePath);
+
+% Dynamically find the model variable
+modelFieldNames = fieldnames(loadedData);
+model = loadedData.(modelFieldNames{1}); % Assume the first field is the model
+if ~isstruct(model)
+    error('The loaded data does not contain a valid model structure.');
+end
+
+% Loop through each sample
+for i = 1:length(samples)
+    sample = samples{i};
+    disp(['Processing sample: ', sample]);
+
+    try
+        % Step 2: Load the gene expression data
+        geneCountFile = sprintf('\gene_counts_%s.csv', sample);
+        if ~isfile(geneCountFile)
+            disp(['Gene count file missing for sample: ', sample]);
+            continue;
+        end
+        expressionData = readtable(geneCountFile);
+
+        % Display column names
+        disp(expressionData.Properties.VariableNames);
+
+        % Ensure column names are correct
+        if ~all(ismember({'GeneID', 'FPKM'}, expressionData.Properties.VariableNames))
+            error('Gene count file does not have the required columns (GeneID, FPKM).');
+        end
+
+        % Extract Gene IDs and FPKM values
+        geneIDs = expressionData.GeneID;
+        fpkmValues = expressionData.FPKM;
+
+        % Prepare expression data structure for mapping
+        expressionDataStruct.gene = cellstr(geneIDs);
+        expressionDataStruct.value = fpkmValues;
+
+        % Step 3: Map gene expression to reactions using 'rxnGeneMat'
+        expressionRxns = NaN(length(model.rxns), 1); % Initialize array
+        for j = 1:length(model.rxns)
+            genesForRxn = find(model.rxnGeneMat(j, :)); % Genes for the reaction
+            if ~isempty(genesForRxn)
+                expressionRxns(j) = min(expressionDataStruct.value(genesForRxn));
+            end
+        end
+
+        % Save reaction expression mapping
+        mappedExpression = table(model.rxns, expressionRxns, 'VariableNames', {'ReactionID', 'ExpressionValue'});
+        outputFile = sprintf('\new_reaction_expression_mapped_%s.csv', sample);
+        writetable(mappedExpression, outputFile);
+        disp(['Mapped reaction expression data saved to: ', outputFile]);
+
+        % Step 4: Create a consistent model
+        consistentModel = readCbModel(modelFilePath);
+        char_inconsistenReactions = 1; % Initialize for the loop
+        while ~isempty(char_inconsistenReactions)
+            [idx_consistentReactions, ~, ~] = fastcc(consistentModel, 1e-4, 0);
+            char_inconsistenReactions = setdiff(consistentModel.rxns, consistentModel.rxns(idx_consistentReactions));
+            if isempty(char_inconsistenReactions)
+                break;
+            end
+            consistentModel = removeRxns(consistentModel, char_inconsistenReactions);
+        end
+
+        % Save the consistent model
+        consModelFile = sprintf('\new_UTI89_context_%s.mat', sample);
+        writeCbModel(consistentModel, 'format', 'mat', 'fileName', consModelFile);
+
+        % Step 5: Reconstruct the context-specific model
+        coreReactionsData = readtable(outputFile);
+        reactionIDs = coreReactionsData.ReactionID;
+        expressionValues = coreReactionsData.ExpressionValue;
+
+        [~, reactionIndices] = ismember(reactionIDs, consistentModel.rxns);
+        validIndices = reactionIndices(reactionIndices > 0);
+        validExpressionValues = expressionValues(reactionIndices > 0);
+
+        % Apply threshold for reaction inclusion
+        threshold = 100;
+        filteredIndices = validIndices(validExpressionValues > threshold);
+
+        epsilon = 1e-4;
+        [tissueModel, ~] = fastcore(consistentModel, filteredIndices, epsilon, 1);
+
+        savePath = sprintf('\new_UTI89_C_%s.mat', sample);
+        save(savePath, 'tissueModel');
+        disp(['Context-specific model saved to: ', savePath]);
+
+        % Step 6: Run FBA
+        contextModel = readCbModel(savePath);
+        biomass_reaction = find(contains(contextModel.rxns, 'biomass'));
+        if ~isempty(biomass_reaction)
+            contextModel.c(biomass_reaction) = 1;
+            solution = optimizeCbModel(contextModel, 'max');
+            if solution.stat == 1
+                disp(['FBA successful. Biomass objective value: ', num2str(solution.f)]);
+            else
+                disp('FBA optimization failed');
+            end
+            fbaResultsPath = sprintf('\fba_results_%s.mat', sample);
+            save(fbaResultsPath, 'solution');
+        else
+            disp('No biomass reaction found. Skipping FBA.');
+        end
+
+    catch ME
+        disp(['Error encountered while processing sample ', sample, ': ', ME.message]);
+        continue;
+    end
+end
+
+disp('Process completed successfully for all samples.');
