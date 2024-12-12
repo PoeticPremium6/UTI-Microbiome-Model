@@ -1,135 +1,80 @@
-#Gapseq models need to be conditioned with gene expression data
-#To reconstruct context-specific models
+#!/bin/bash 
 
-# Extract Chromosome start/end & gene count info from E.coli UTI89 transcriptome files
-awk '{print $4,$5,$10}' /rUTI/Transcriptome/E.coli_UTI89_Transcriptome.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome0.gtf
+# Define paths
+TRANSCRIPTOME="/UTI89_transcriptome.gff"
+ABUNDANCE="/master_gene_abundance_UTI89.tsv"
+OUTPUT_DIR="/Processed_Data"
 
-# Process the extracted data
-awk 'NR>2' /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome0.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome1.gtf
-awk '!_[$0]++' /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome1.gtf | sort -t, -nk1,1 > /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome2.gtf
+# Create output directory if it doesn't exist
+mkdir -p $OUTPUT_DIR
 
-# Since the strain is UTI89, we might not need to filter out its specific references. Adjust if needed for other strains.
-grep -v "UTI89" /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome2.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome3.gtf
-grep -v "AH4AK4" /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome3.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome4.gtf
+# Process transcriptome
+# Extract gene ID, start, end positions, and calculate gene lengths
+awk '{print $4, $5, $10}' $TRANSCRIPTOME > $OUTPUT_DIR/transcriptome_clean_step1.tsv
 
-# Identify duplicates and clean up
-awk 'cnt[$3]++{$3=$3" variant "cnt[$3]-1} 1' /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome4.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome5.gtf
-grep -v "variant" /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome5.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/transcriptome_clean.gtf
+# Calculate gene lengths (end - start) and save to a new file
+awk '{print $1, $2, $2-$1}' $OUTPUT_DIR/transcriptome_clean_step1.tsv > $OUTPUT_DIR/gene_lengths.tsv
 
-# Calculating gene length
-awk 'BEGIN {OFS="  "} {print $4,$5}' /rUTI/Transcriptome/E.coli_UTI89_Transcriptome.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length.gtf
-awk 'BEGIN {OFS="  "} {print $2 - $1}' /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length1.gtf
-paste -d'  ' /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length.gtf /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length1.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length2.gtf
+# Remove duplicate entries and save final gene lengths
+awk '!_[$0]++' $OUTPUT_DIR/gene_lengths.tsv > $OUTPUT_DIR/UTI89_Gene_Lengths.tsv
 
-# Navigate to your Transcriptome directory for E.coli UTI89
-# Sort HTSeq count files to align them properly
-# Make sure to replace the file names with your actual E.coli UTI89 count files
-sort -V /rUTI/Transcriptome/E.coli_UTI89_1_htseq_counts.out > /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_1_htseq_counts_sorted.out
+# Process gene abundance
+# Sort the abundance file
+sort -V $ABUNDANCE > $OUTPUT_DIR/clean_master_gene_abundance.tsv
 
-# Extract gene and count information
-awk '{print $1}' /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_1_htseq_counts_sorted.out > /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_genes.gtf
+# Step to avoid duplicate headers: Remove the first line (if already a header) and add custom headers
+# Remove duplicate headers and write final result
+awk 'NR==1{next} {print}' $OUTPUT_DIR/clean_master_gene_abundance.tsv | \
+awk 'BEGIN {print "Gene ID\tGene Name\tA01\tA02\tB01\tB02\tC01\tC02\tD01\tD02\tE01\tE02\tF01\tF02\tG01\tH01\tH25361\tH25362\tH25363\tH25364\tH25365"} {print $0}' > $OUTPUT_DIR/clean_master_gene_abundance_UTI89.tsv
 
-# Repeat the process for counts in all files
-for i in {1..5}
-do
-  awk '{print $2}' /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_"$i"_htseq_counts_sorted.out > /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_"$i".gtf
-done
+# Final message
+echo "Gene abundance file processed and saved to $OUTPUT_DIR/clean_master_gene_abundance_UTI89.tsv"
 
-# Merge count files
-paste -d';' /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_genes.gtf /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_1.gtf /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_2.gtf /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_3.gtf /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_4.gtf /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_counts_5.gtf > /rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Counts.csv
+#############################
+import os
+import pandas as pd
 
-# Adjust for specific IDs, species info, or other filters as needed for your analysis.
-#We need to make sure that our transcriptomes match our microbial metabolic models
+# Define directories
+input_dir = r"\New_Gene_Abundance"
+output_dir = r"\Processed_Data\UTI89"
+os.makedirs(output_dir, exist_ok=True)
 
-module load hdf5
-module load R/4.0.0
-module load openmpi
+# Define the sample IDs
+sample_ids = [
+    "A01", "A02", "B01", "B02", "C01", "C02", 
+    "D01", "D02", "E01", "E02", "F01", "F02", 
+    "G01", "H01", "H25361", "H25362", "H25363", "H25364", "H25365"
+]
 
-# Open R
-R
+# Process each sample
+for sample_id in sample_ids:
+    try:
+        # Define input and output file paths
+        input_count_file = os.path.join(
+            input_dir, f"gene_abundance_GCF_000013265.1_ASM1326v1_UTI89_{sample_id}.tsv"
+        )
+        output_file = os.path.join(output_dir, f"gene_counts_{sample_id}.csv")
+        
+        # Check if the input file exists
+        if not os.path.exists(input_count_file):
+            print(f"Input file not found: {input_count_file}")
+            continue
 
-# Define the functions to calculate RPKM and TPM
-rpkm <- function(counts, lengths) {
-  rate <- counts / lengths 
-  rate / sum(counts) * 1e6
-}
-
-tpm <- function(counts, lengths) {
-  rate <- counts / lengths
-  rate / sum(rate) * 1e6
-}
-
-# Update paths to the files for E.coli UTI89
-genes <- read.table("/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Gene_Length_Clean.csv", header=TRUE, sep=",")
-counts <- read.table("/rUTI/Metabolic_Model/E.coli_UTI89/chromosome_merged_clean.csv", header=TRUE, sep=";")
-
-# Calculate RPKMs and TPMs
-rpkms <- apply(counts[, -1], 2, function(x) rpkm(x, genes$Length))
-tpms <- apply(counts[, -1], 2, function(x) tpm(x, genes$Length))
-
-# Adjust column names if needed
-colnames(rpkms) <- colnames(counts)[-1] # Excludes the first column (gene ID)
-colnames(tpms) <- colnames(counts)[-1]
-
-# Output the results to CSV files
-write.table(rpkms, "/rUTI/Metabolic_Model/E.coli_UTI89/RPKMs.csv", row.names=TRUE, col.names=NA, sep=";", quote=FALSE)
-write.table(tpms, "/rUTI/Metabolic_Model/E.coli_UTI89/TPMS.csv", row.names=TRUE, col.names=NA, sep=";", quote=FALSE)
-
-# Adjust for library paths if needed
-library("sybil", lib="rUTI/Software/R_packages/") 
-library("data.table", lib="rUTI/Software/R_packages/") 
-
-# Adjust the working directory to where your models are located
-setwd("/rUTI/Genomes/GapSeq/Models/out/")
-
-# Ensure you have the E.coli UTI89 model available
-Model <- readRDS('E.coli_UTI89.RDS')
-
-# Extract and save the GapSeq Start/Stop information for E.coli UTI89
-str_Data <- paste(Model@react_attr$sstart, Model@react_attr$rxn, sep = ";")
-str_Data1 <- paste(Model@react_attr$sstart, Model@react_attr$send, sep = "_")
-write.table(str_Data, "/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_GapSeq_Genes.csv", row.names=FALSE, col.names=TRUE, quote=FALSE)
-write.table(str_Data1, "/rUTI/Metabolic_Model/E.coli_UTI89/E.coli_UTI89_Chromosome_Matching.csv", row.names=FALSE, col.names=TRUE, quote=FALSE)
-
-# Exit R
-quit(save="no")
-
-import cobra
-# Replace '/rUTI/Genomes/GapSeq/Models/out/model.sbml' with the actual path to your SBML file
-model_path = '/rUTI/Genomes/GapSeq/Models/out/model.sbml'
-model = cobra.io.read_sbml_model(model_path)
-output_path = '/rUTI/Genomes/GapSeq/Models/out/output_model.mat'
-cobra.io.save_matlab_model(model, output_path)
-
-module load git
-module load cplex
-module load matlab
-
-export ILOG_CPLEX_PATH="/rUTI/Software/cplex"
-cd /rUTI/Software/cobratoolbox/
-initCobraToolbox(false) % The argument 'false' skips the toolbox update check
-changeCobraSolver('ibm_cplex', 'all');
-
-model = readCbModel('/rUTI/Genomes/GapSeq/Models/out/model.mat');
-
-T = readtable('/rUTI/Genomes/GapSeq/Models/out/gene_expression.csv', 'Delimiter', ',');
-S5 = struct('gene', {T.gene}, 'value', T.value);
-
-[expressionRxns, parsedGPR] = mapExpressionToReactions(model, S5);
-
-csvwrite('/rUTI/expressionRxns.csv', expressionRxns);
-writetable(cell2table(parsedGPR), '/rUTI/GPR_names.csv');
-
-model = readCbModel('/rUTI/Genomes/GapSeq/Models/out/model.mat');
-
-[consistentModel, removedRxns] = makeModelConsistent(model);
-
-saveModel(consistentModel, 'consistentModel.mat');
-
-[expressionRxns, ~] = mapExpressionToReactions(consistentModel, geneExpressionData);
-
-coreRxns = find(expressionRxns > threshold); % Define threshold according to your data
-microbialGEM = fastcore(coreRxns, consistentModel);
-
-saveModel(microbialGEM, 'Ecoli_UTI89.mat');
+        # Load the input file
+        df = pd.read_csv(input_count_file, sep="\t")
+        
+        # Add a new column for the updated gene IDs
+        df["Length Difference"] = df["End"] - df["Start"]
+        df["Updated Gene ID"] = df["Reference"].str.replace(".", "_") + "_" + df["Length Difference"].astype(str)
+        
+        # Select relevant columns and rename for clarity
+        final_df = df[["Updated Gene ID", "Gene Name", "Coverage", "FPKM", "TPM"]]
+        final_df.rename(columns={"Updated Gene ID": "Gene ID"}, inplace=True)
+        
+        # Save to CSV
+        final_df.to_csv(output_file, index=False)
+        print(f"Processed sample {sample_id}: output saved to {output_file}")
+    
+    except Exception as e:
+        print(f"Error processing sample {sample_id}: {e}")
 
