@@ -7,8 +7,8 @@ https://www.biorxiv.org/content/10.1101/2024.03.25.586446v1.full.pdf
 ![Screenshot 2024-09-18 225507](https://github.com/user-attachments/assets/0d2284c8-6f6d-4d0d-bc2b-8e374c1011db)
 
 
-#UTI Microbiome Metabolic Modeling Pipeline
-#Intro
+# UTI Microbiome Metabolic Modeling Pipeline
+# Intro
 This repository implements a metatranscriptomics-to-metabolic-modeling pipeline for patient urinary microbiomes, as described in the manuscript. Raw RNA sequencing reads are first processed with standard bioinformatics tools: FastQC for read quality assessment, Cutadapt for adapter trimming, and PRINSEQ-lite for filtering and quality trimming. Host (human) reads are removed by aligning against the GRCh38 reference with Bowtie2. Ribosomal RNA and mRNA reads are then identified and filtered using SortMeRNA with the SILVA and Rfam databases. This yields high-quality, non-human mRNA and rRNA reads for downstream analysis. 
 
 #rRNA and mRNA Analysis
