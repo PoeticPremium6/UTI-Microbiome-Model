@@ -24,3 +24,35 @@ Taxonomic profiling of both metatranscriptomic rRNA and 16S rDNA data is perform
 
 # Context-specific Metabolic Modelling
 For metabolic modeling, we build species-specific genome-scale models using gapseq with each bacterial genome from NCBI. We perform gapseq’s “find” and “find-transport” steps to predict reactions and transporters, then create draft models and gap-fill against our custom urine medium. The custom “in silico urine” medium is based on the Human Urine Metabolome (Bouatra et al. 2013) which identified 445 urinary metabolites. Metabolite concentrations were normalized to creatinine levels and formatted as VMH exchange reactions. We then integrate expression data into the GEMs using the COBRA Toolbox  in MATLAB. Gene expression (FPKM) is mapped to model reactions, and the fast-consistency algorithm (fastcc) is applied to identify a flux-consistent subnetwork. Next, the fastcore algorithm extracts a minimal “active” reaction set: reactions with expression in the top 25% are treated as core, and fastcore expands this to a flux-consistent model. The resulting context-specific models are  tested by flux balance analysis and flux variabilility analysis. Finally, we simulate patient-specific microbial communities with BacArena in R. Community models are assembled by combining each patient’s species-specific GEMs in a 100×100  arena with initial abundances proportional to the OTU counts. The urine medium (VMH-based) provides extracellular metabolites. Simulations run for several time steps (1-hour increments, 4 hours total, in triplicate) to capture growth and metabolic interactions. We analyze outputs for species growth, metabolite production/consumption, and cross-feeding patterns between species.
+
+# Software Dependencies
+The pipeline requires the following software:
+FastQC v0.11.8
+Cutadapt v1.5
+PRINSEQ-lite v0.20.4
+Bowtie2 v2.5.4
+SortMeRNA v4.3.7 
+CD-HIT v4.8.1
+USEARCH v12.0
+HISAT2 v2.1.0 
+SAMtools v1.16
+featureCounts (Subread) v2.0.3 
+StringTie v2.1.4
+Python v3.x
+gapseq v1.3.1
+MATLAB (R2019 with COBRA Toolbox (v3.0)
+R v4.3.2  
+Phyloseq (v1.5)
+BacArena (v1.8.1)
+(Other R packages such as dplyr, ggplot2, etc., are also used in analysis scripts.)
+The pipeline was developed on Linux; Unix-compatible environments (macOS/Linux) are recommended. Some tools (Cutadapt, gapseq, etc.) have their own dependencies (e.g. Python libraries, BLAST for gapseq). Users should ensure the above software is installed and in $PATH.
+
+# Reference Databases
+The following reference data are required:
+Human genome (GRCh38) 
+Rfam database
+RDP 16S database 
+NCBI Genomes and Annotations
+Virulence Factor Database (VFDB)
+Human Urine Metabolome (HMDB)
+Virtual Metabolic Human (VMH)
