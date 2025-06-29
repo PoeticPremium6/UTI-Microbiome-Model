@@ -7,9 +7,17 @@ https://www.biorxiv.org/content/10.1101/2024.03.25.586446v1.full.pdf
 ![Screenshot 2024-09-18 225507](https://github.com/user-attachments/assets/0d2284c8-6f6d-4d0d-bc2b-8e374c1011db)
 
 
+
 # UTI Microbiome Metabolic Modeling Pipeline
 # Intro
 This repository implements a metatranscriptomics-to-metabolic-modeling pipeline for patient urinary microbiomes, as described in the manuscript. Raw RNA sequencing reads are first processed with standard bioinformatics tools: FastQC for read quality assessment, Cutadapt for adapter trimming, and PRINSEQ-lite for filtering and quality trimming. Host (human) reads are removed by aligning against the GRCh38 reference with Bowtie2. Ribosomal RNA and mRNA reads are then identified and filtered using SortMeRNA with the SILVA and Rfam databases. This yields high-quality, non-human mRNA and rRNA reads for downstream analysis. 
+
+# How the Repository Runs
+This repository is organized into three main script directories:
+1) Preprocessing: Contains scripts for raw data processing, including quality control, rRNA/mRNA separation , mapping and expression quantification, and metabolic model reconstruction. These scripts prepare the inputs for downstream metabolic modeling and community simulations.
+2) Main_Analysis: Contains R scripts (Figure2.R–Figure6.R) used to generate the main manuscript figures from the processed data and simulation outputs. Each script is self-contained and annotated with input/output file paths and statistical methods.
+3) Supplementary_Analysis: Includes scripts and data used to reproduce supplementary figures or perform additional exploratory analyses that support the main text.
+
 
 # rRNA and mRNA Analysis
 Taxonomic profiling of both metatranscriptomic rRNA and 16S rDNA data is performed by clustering sequences into zero-radius OTUs (zOTUs) using USEARCH and classifying them with against the RDP 16S database. The RDP classifier is a Naïve Bayesian method for rapid 16S taxonomy assignment. The R package phylose is used to merge OTU tables with sample metadata, filter low-abundance taxa, and normalize counts. Gene expression quantification proceeds by mapping the filtered mRNA reads to species reference genomes (see Supplementary Table S3). We build HISAT2 genome indexes and align reads with HISAT2 in RNA-seq mode. The alignments are processed with SAMtools. Gene-level counts are obtained with FeatureCounts. StringTie is then used to assemble transcripts and calculate expression values (FPKM) for each gene. All species’ gene counts are combined into cohort-wide tables. In particular, E. coli counts are compared against the UTI89 genome to identify expressed virulence genes using the Virulence Factor Database (VFDB). 
