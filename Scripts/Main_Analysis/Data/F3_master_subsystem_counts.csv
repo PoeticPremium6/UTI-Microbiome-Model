@@ -1,0 +1,70 @@
+Subsystem	A01	A02	B01	B02	C01	C02	D01	D02	E01	E02	F01	F02	G01	H01	H25361	H25362	H25363	H25364	H25365
+Alanine and aspartate metabolism	6	8	7	0	5	8	5	6	6	9	8	7	5	9	8	7	5	8	7
+Aminosugar metabolism	10	8	9	0	8	10	0	8	10	9	8	8	8	8	8	7	4	8	8
+Arginine and proline metabolism	5	15	15	0	9	14	1	9	5	17	10	7	6	10	10	16	4	10	14
+Ascorbate and aldarate metabolism	2	2	2	0	2	4	0	4	2	2	2	2	0	0	2	4	0	2	4
+Benzoate degradation	0	1	1	0	0	0	0	1	0	1	1	0	0	1	1	1	0	1	0
+Beta-alanine metabolism	2	3	1	0	1	1	0	2	1	3	1	2	0	1	1	2	1	3	1
+Bile acid metabolism	3	3	3	1	3	3	0	3	3	3	3	3	2	3	3	3	3	3	3
+Biotin metabolism	16	16	16	0	15	16	0	16	16	16	16	16	15	16	16	16	14	16	15
+Butanoate metabolism	6	6	6	2	6	6	2	6	6	6	4	6	2	6	6	6	2	6	6
+Cell wall biosynthesis	17	18	19	0	16	18	0	17	15	18	18	17	15	19	18	17	15	17	18
+Cholesterol metabolism	2	3	3	2	2	3	2	2	2	3	2	2	2	2	3	2	2	3	2
+Citric acid cycle	7	10	10	2	9	10	3	9	8	12	9	8	7	11	10	10	6	11	11
+CoA synthesis	6	9	9	0	10	10	0	6	6	9	9	9	6	9	9	9	6	10	10
+Drug metabolism	25	145	122	12	90	122	14	45	80	114	107	53	61	118	104	125	46	121	119
+Exchange/demand reaction	172	446	387	49	289	389	52	230	298	365	350	241	209	373	341	414	166	385	369
+Fatty acid oxidation	3	2	3	3	3	2	3	2	3	2	2	2	3	2	3	3	3	2	3
+Fatty acid synthesis	32	38	38	26	36	37	26	36	36	38	38	34	34	38	38	38	29	33	38
+Folate metabolism	9	17	15	0	12	16	0	8	9	17	16	9	8	13	16	18	1	13	15
+Fructose and mannose metabolism	2	6	1	0	2	3	0	1	3	0	4	2	0	1	3	3	0	4	2
+Galactose metabolism	1	8	8	0	2	9	0	8	7	5	7	8	1	10	8	10	1	5	6
+Glutamate metabolism	5	7	5	2	6	4	2	6	6	6	4	5	7	4	3	5	6	6	5
+Glutathione metabolism	1	3	1	0	1	3	0	1	0	1	1	1	1	1	1	1	1	1	1
+Glycerophospholipid metabolism	28	49	48	9	38	44	8	23	22	45	46	25	34	50	45	49	10	42	44
+Glycine, serine, alanine, and threonine metabolism	7	13	14	0	10	15	0	12	11	12	16	13	8	13	14	14	13	12	17
+Glycolysis/gluconeogenesis	10	18	17	8	10	18	10	14	17	15	16	17	12	17	16	14	11	13	14
+Glyoxylate and dicarboxylate metabolism	2	8	7	0	5	5	0	3	3	6	3	7	4	4	4	7	1	6	5
+Heparan sulfate degradation	0	1	0	0	0	0	0	0	1	0	0	1	0	0	0	0	0	0	0
+Histidine metabolism	9	9	9	0	0	0	0	9	11	9	9	9	0	0	9	10	0	10	9
+Lipopolysaccharide biosynthesis	30	30	30	0	30	30	0	30	30	30	30	30	30	30	30	30	30	30	30
+Lysine metabolism	15	14	15	4	14	14	4	13	14	14	14	14	6	14	14	14	14	14	14
+Methionine and cysteine metabolism	10	11	10	0	8	12	0	8	11	13	10	8	6	8	10	11	5	13	12
+Miscellaneous	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+NAD metabolism	4	9	9	0	5	11	0	5	2	10	10	4	4	9	10	9	4	10	5
+Nitrogen metabolism	0	1	1	0	0	1	0	1	1	1	1	1	0	1	1	1	0	1	1
+Nucleotide interconversion	37	46	44	7	41	46	7	41	37	46	46	42	28	44	45	45	28	43	42
+Nucleotide salvage pathway	1	2	1	0	2	2	1	1	1	0	1	0	1	2	2	1	0	2	2
+Nucleotide sugar metabolism	2	2	2	0	2	2	0	2	2	2	2	2	2	2	2	2	2	2	2
+Others	0	1	0	0	0	1	0	0	0	1	0	0	0	0	0	1	0	1	1
+Oxidative phosphorylation	1	1	1	1	1	1	1	0	1	1	1	1	1	1	1	1	1	1	1
+Pentose and glucuronate interconversions	6	11	10	2	6	10	2	8	11	10	10	7	4	9	10	8	3	9	7
+Pentose phosphate pathway	12	23	16	13	15	21	13	15	18	18	15	15	12	17	15	21	10	21	14
+Peptide metabolism	10	17	15	0	9	16	0	14	11	14	14	13	5	13	14	17	6	16	13
+Phenylalanine metabolism	10	14	12	7	9	10	7	12	9	13	13	12	7	13	13	14	7	13	9
+Plant polysaccharide degradation	0	1	0	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0
+Propanoate metabolism	0	3	3	0	0	3	0	0	0	0	3	0	0	0	0	0	0	0	0
+Purine catabolism	5	11	11	1	5	9	3	8	8	10	10	6	4	10	8	9	3	9	9
+Purine synthesis	2	12	11	0	12	12	0	12	8	8	10	11	1	12	11	8	0	10	11
+Pyrimidine catabolism	3	6	4	2	2	4	2	4	3	4	4	5	2	3	4	4	3	5	2
+Pyrimidine synthesis	7	9	10	0	8	10	6	6	7	9	9	5	2	10	10	9	7	10	7
+Pyruvate metabolism	10	13	14	3	11	16	4	11	11	14	12	9	4	13	16	11	7	16	9
+ROS detoxification	0	1	1	0	1	1	0	0	0	1	1	0	0	1	1	1	0	1	0
+Respiration	4	14	13	5	8	11	5	8	8	10	9	11	5	12	11	9	4	12	7
+Squalene and cholesterol synthesis	0	1	1	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0
+Starch and sucrose metabolism	2	9	7	0	6	9	0	3	0	9	7	2	5	7	9	6	0	7	5
+Sulfur metabolism	4	3	4	0	2	3	0	3	4	3	3	3	2	3	3	3	2	2	3
+Terpenoid backbone biosynthesis	11	13	13	10	10	13	10	11	11	13	11	11	10	11	14	11	10	14	11
+Tetrahydrobiopterin metabolism	1	1	1	0	1	1	0	1	1	1	1	1	1	1	1	1	0	1	1
+Thiamine metabolism	0	5	5	0	5	5	0	0	6	5	5	0	0	5	5	5	0	7	5
+Transport, extracellular	0	1	1	0	1	1	0	1	0	1	1	0	0	1	1	1	0	1	1
+Transport, periplasmatic	309	859	744	90	548	745	99	426	555	699	670	445	397	717	653	791	313	741	710
+Tryptophan metabolism	1	8	9	1	8	9	1	4	1	9	9	1	0	9	9	10	1	8	9
+Tyrosine metabolism	0	0	0	0	0	2	0	0	0	2	2	3	0	2	2	1	0	2	0
+Ubiquinone and other terpenoid-quinone biosynthesis	16	16	17	7	16	16	7	16	16	18	16	16	16	17	18	16	15	18	16
+Unassigned	1	1	1	0	1	1	0	1	1	1	1	1	0	1	1	1	0	1	1
+Urea cycle	3	4	4	0	3	3	1	2	3	5	3	2	2	4	3	3	2	3	2
+Valine, leucine, and isoleucine metabolism	17	18	18	5	16	9	2	18	17	18	16	18	13	16	15	17	0	17	13
+Vitamin B12 metabolism	1	1	1	0	1	1	0	1	1	1	1	1	1	1	1	1	1	1	1
+Vitamin B2 metabolism	3	12	11	0	11	11	0	3	2	11	10	4	10	11	11	12	2	12	12
+Vitamin B6 metabolism	1	3	1	0	2	1	0	2	3	1	3	3	2	1	1	3	2	1	1
