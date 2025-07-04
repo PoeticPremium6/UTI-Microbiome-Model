@@ -29,30 +29,30 @@ For metabolic modeling, we build species-specific genome-scale models using gaps
 The pipeline requires the following software:
 * FastQC v0.11.8
 * Cutadapt v1.5
-PRINSEQ-lite v0.20.4
-Bowtie2 v2.5.4
-SortMeRNA v4.3.7 
-CD-HIT v4.8.1
-USEARCH v12.0
-HISAT2 v2.1.0 
-SAMtools v1.16
-featureCounts (Subread) v2.0.3 
-StringTie v2.1.4
-Python v3.x
-gapseq v1.3.1
-MATLAB (R2019 with COBRA Toolbox (v3.0)
-R v4.3.2  
-Phyloseq (v1.5)
-BacArena (v1.8.1)
+* PRINSEQ-lite v0.20.4
+* Bowtie2 v2.5.4
+* SortMeRNA v4.3.7 
+* CD-HIT v4.8.1
+* USEARCH v12.0
+* HISAT2 v2.1.0 
+* SAMtools v1.16
+* featureCounts (Subread) v2.0.3 
+* StringTie v2.1.4
+* Python v3.x
+* gapseq v1.3.1
+* MATLAB (R2019 with COBRA Toolbox (v3.0)
+* R v4.3.2  
+* Phyloseq (v1.5)
+* BacArena (v1.8.1)
 (Other R packages such as dplyr, ggplot2, etc., are also used in analysis scripts.)
 The pipeline was developed on Linux; Unix-compatible environments (macOS/Linux) are recommended. Some tools (Cutadapt, gapseq, etc.) have their own dependencies (e.g. Python libraries, BLAST for gapseq). Users should ensure the above software is installed and in $PATH.
 
 # Reference Databases
 The following reference data are required:
-Human genome (GRCh38) 
-Rfam database
-RDP 16S database 
-NCBI Genomes and Annotations
-Virulence Factor Database (VFDB)
-Human Urine Metabolome (HMDB)
-Virtual Metabolic Human (VMH)
+* Human genome (GRCh38) 
+* Rfam database
+* RDP 16S database 
+* NCBI Genomes and Annotations
+* Virulence Factor Database (VFDB)
+* Human Urine Metabolome (HMDB)
+* Virtual Metabolic Human (VMH)
