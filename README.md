@@ -27,8 +27,8 @@ For metabolic modeling, we build species-specific genome-scale models using gaps
 
 # Software Dependencies
 The pipeline requires the following software:
-FastQC v0.11.8
-Cutadapt v1.5
+* FastQC v0.11.8
+* Cutadapt v1.5
 PRINSEQ-lite v0.20.4
 Bowtie2 v2.5.4
 SortMeRNA v4.3.7 
